@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TVDBAndroidApp.iml" filepath="$PROJECT_DIR$/TVDBAndroidApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ninjaTdvb.iml" filepath="$PROJECT_DIR$/ninjaTdvb.iml" />
     </modules>
   </component>
 </project>
