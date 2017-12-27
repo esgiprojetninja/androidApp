@@ -25,7 +25,7 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:weightSum="1"
-            android:layout_weight="4"
+            android:layout_weight="5"
             android:layout_height="match_parent">
             <TextView
                 android:layout_width="wrap_content"
@@ -48,6 +48,14 @@
                 android:inputType="textPassword"
                 android:id="@+id/password_input"
                 android:layout_height="wrap_content" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:weightSum="1"
+                android:text="@string/send_label"
+                android:clickable="true"
+                android:onClick="connectionHandler"
+                />
         </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
