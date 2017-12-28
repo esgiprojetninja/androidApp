@@ -1,5 +1,6 @@
 package ninja.esgi.tvdbandroidapp;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void connectionHandler(View view) {
+        Runnable runnable = TdvbAPI.login();
 
+        AsyncTask.execute(runnable);
     }
 }
