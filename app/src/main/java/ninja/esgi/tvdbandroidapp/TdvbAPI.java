@@ -43,13 +43,16 @@ abstract class TdvbAPI {
         // Write the data
         connection.getOutputStream().write(urlParameters.getBytes());
 
-        InputStream responseBody = connection.getInputStream();
-        InputStreamReader responseBodyReader = new InputStreamReader(responseBody, "UTF-8");
         JSONObject json = new JSONObject();
+        json.put("statusCode", connection.getResponseCode());
         if (connection.getResponseCode() == 200) {
+
+            InputStream responseBody = connection.getInputStream();
+            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, "UTF-8");
             JsonReader jsonReader = new JsonReader(responseBodyReader);
             jsonReader.beginObject();
             while (jsonReader.hasNext()) {
+
                 String key = jsonReader.nextName();
                 String value = jsonReader.nextString();
                 json.put(key, value);
@@ -59,7 +62,6 @@ abstract class TdvbAPI {
                 json.put("succes", true);
             }
         } else {
-            json.put("error", responseBodyReader.toString());
             json.put("succes", false);
         }
         connection.disconnect();
