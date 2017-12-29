@@ -1,21 +1,15 @@
 package ninja.esgi.tvdbandroidapp;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -119,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 Log.d("TAG",response.body().string());
                 ResponseBody resBody = response.body();
-                resBody.
+                String resString = resBody.string();
                 // _storage.saveToken(json.getString("token"));
                 // @TODO: save username in storage too
                 spinner.setVisibility(View.GONE);
