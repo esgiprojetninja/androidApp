@@ -23,7 +23,7 @@ abstract class TdvbAPI {
     private TdvbAPI() {
     }
 
-    public static JSONObject sendPostRequest(String method, Map<String, String> data) throws IOException, JSONException {
+    public static JSONObject sendPostRequest(String method, Map<String, String> data) throws IOException, JSONException, InterruptedException {
         // Create URL
         URL endpoint = new URL(String.format("%s%s", TdvbAPI.URI, method));
         // Create connection
@@ -79,23 +79,6 @@ abstract class TdvbAPI {
         }
      * @APIreturn {"token": "string"}
      */
-    public static Runnable login(final FutureTask<JSONObject> future) {
-        final Map<String, String> data = new HashMap<>();
-        data.put("apikey", TdvbAPI.API_KEY);
-        data.put("userkey", "hello");
-        data.put("username", "world");
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    JSONObject json = TdvbAPI.sendPostRequest("login", data);
-                    future.run();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
+    public static void login(final FutureTask<JSONObject> future) {
     }
 }
