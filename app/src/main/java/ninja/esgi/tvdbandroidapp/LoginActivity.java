@@ -11,6 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +28,6 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class LoginActivity extends AppCompatActivity {
-    Spinner spinner;
-    LinearLayout linear_layout;
     private SharedStoragePrefs _storage = new SharedStoragePrefs();
     private final String _postUrl = "https://api.thetvdb.com/login";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -77,11 +78,6 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         data.put("apikey", BuildConfig.TDVB_API_KEY);
-        spinner = (Spinner) findViewById(R.id.planets_spinner);
-        linear_layout = (LinearLayout) findViewById(R.id.main_login_layout);
-        spinner.setVisibility(View.VISIBLE);
-        linear_layout.setVisibility(View.GONE);
-
         String urlBody = "{\n";
         for (Map.Entry<String, String> entry : data.entrySet())
         {
@@ -110,14 +106,25 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                try {
 
-                Log.d("TAG",response.body().string());
-                ResponseBody resBody = response.body();
-                String resString = resBody.string();
-                // _storage.saveToken(json.getString("token"));
-                // @TODO: save username in storage too
-                spinner.setVisibility(View.GONE);
-                linear_layout.setVisibility(View.VISIBLE);
+                    if (response.code() == 200) {
+                        String resString = response.body().string();
+                        JSONObject json = new JSONObject(resString);
+                        Log.d("suce", json.toString());
+
+                        if (json.has("token")) {
+                            _storage.saveToken(json.getString("token"));
+                            // @TODO: save username in storage too
+                        }
+                    } else {
+                        // @TODO : Display auth fail msg
+                        Log.d("fuuuuck",  response.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                }
             }
         });
     }
