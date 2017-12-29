@@ -63,8 +63,8 @@ abstract class TdvbAPI {
         } else {
             json.put("succes", false);
         }
+        Log.d("RequestResponse", json.toString());
         connection.disconnect();
-        Log.d("request response", json.toString());
         return json;
     }
 

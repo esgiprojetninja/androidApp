@@ -14,13 +14,28 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
 public class LoginActivity extends AppCompatActivity {
+    Spinner spinner;
+    LinearLayout linear_layout;
     private SharedStoragePrefs _storage = new SharedStoragePrefs();
+    private final String _postUrl = "https://api.thetvdb.com/login";
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,40 +69,61 @@ public class LoginActivity extends AppCompatActivity {
 
         if ( username != null && userkey != null && username.length() > 0 && userkey.length() > 0) {
             Map<String, String> map = new HashMap<>();
-            map.put("username", "bitechatte");
+            map.put("username", username);
             map.put("userkey", userkey);
             return map;
         }
         return null;
     }
 
-    public void connectionHandler(View view) {
+    public void connectionHandler(View view) throws IOException {
         final Map<String, String> data = this.controlFiels(view.getRootView());
         if (data == null) {
             Log.d("INPUTS_ERROR", "control failed on username&||userkey");
             return;
         }
         data.put("apikey", BuildConfig.TDVB_API_KEY);
-        final Spinner spinner = (Spinner) findViewById(R.id.planets_spinner);
-        final LinearLayout layout = (LinearLayout) findViewById(R.id.main_login_layout);
+        spinner = (Spinner) findViewById(R.id.planets_spinner);
+        linear_layout = (LinearLayout) findViewById(R.id.main_login_layout);
         spinner.setVisibility(View.VISIBLE);
-        layout.setVisibility(View.GONE);
-        runOnUiThread(new Runnable() {
+        linear_layout.setVisibility(View.GONE);
+
+        String urlBody = "{\n";
+        for (Map.Entry<String, String> entry : data.entrySet())
+        {
+            urlBody += "\"" + entry.getKey() + "\": " + entry.getValue() + "\",";
+        }
+        urlBody = urlBody.substring(0, urlBody.length() - 1) + "}";
+        this.postRequest(urlBody);
+    }
+
+    private void postRequest(String postBody) throws IOException {
+
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody body = RequestBody.create(JSON, postBody);
+
+        Request request = new Request.Builder()
+                .url(_postUrl)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void run() {
-                try {
-                    JSONObject json = TdvbAPI.sendPostRequest("login", data);
-                    if (json.has("status") && json.getBoolean("status") == true && json.has("token")) {
-                        // save token in storage
-                        _storage.saveToken(json.getString("token"));
-                        // @TODO: save username in storage too
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    spinner.setVisibility(View.GONE);
-                    layout.setVisibility(View.VISIBLE);
-                }
+            public void onFailure(Call call, IOException e) {
+                call.cancel();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                Log.d("TAG",response.body().string());
+                ResponseBody resBody = response.body();
+                resBody.
+                // _storage.saveToken(json.getString("token"));
+                // @TODO: save username in storage too
+                spinner.setVisibility(View.GONE);
+                linear_layout.setVisibility(View.VISIBLE);
             }
         });
     }
