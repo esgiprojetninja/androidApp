@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.FutureTask;
 
@@ -18,7 +17,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 abstract class TdvbAPI {
     private static final String URI = "https://api.thetvdb.com/";
-    public static final String API_KEY = "test";
 
     private TdvbAPI() {
     }
