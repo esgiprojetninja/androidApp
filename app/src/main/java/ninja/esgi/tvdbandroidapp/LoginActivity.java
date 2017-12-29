@@ -1,13 +1,17 @@
 package ninja.esgi.tvdbandroidapp;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import org.json.JSONObject;
@@ -42,15 +46,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private Map<String,String> controlFiels(View view) {
-        final EditText usernameDom = (EditText) view.findViewById(R.id.username_input);
-        final EditText userkeyDom = (EditText) view.findViewById(R.id.userkey_input);
+        EditText usernameDom = (EditText) view.findViewById(R.id.username_input);
+        EditText userkeyDom = (EditText) view.findViewById(R.id.userkey_input);
 
         final String username = (String) usernameDom.getText().toString();
         final String userkey = (String) userkeyDom.getText().toString();
 
-        if ( username != null && userkey != null) {
+        if ( username != null && userkey != null && username.length() > 0 && userkey.length() > 0) {
             Map<String, String> map = new HashMap<>();
-            map.put("username", username);
+            map.put("username", "bitechatte");
             map.put("userkey", userkey);
             return map;
         }
@@ -58,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void connectionHandler(View view) {
-        final Map<String, String> data = this.controlFiels(view);
+        final Map<String, String> data = this.controlFiels(view.getRootView());
         if (data == null) {
             Log.d("INPUTS_ERROR", "control failed on username&||userkey");
             return;
@@ -76,6 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (json.has("status") && json.getBoolean("status") == true && json.has("token")) {
                         // save token in storage
                         _storage.saveToken(json.getString("token"));
+                        // @TODO: save username in storage too
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
