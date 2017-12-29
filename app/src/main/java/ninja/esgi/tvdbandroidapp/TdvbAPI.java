@@ -12,17 +12,18 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.FutureTask;
 
 import javax.net.ssl.HttpsURLConnection;
 
 abstract class TdvbAPI {
     private static final String URI = "https://api.thetvdb.com/";
-    private static final String API_KEY = "test";
+    public static final String API_KEY = "test";
 
     private TdvbAPI() {
     }
 
-    private static JSONObject sendPostRequest(String method, Map<String, String> data) throws IOException, JSONException {
+    public static JSONObject sendPostRequest(String method, Map<String, String> data) throws IOException, JSONException {
         // Create URL
         URL endpoint = new URL(String.format("%s%s", TdvbAPI.URI, method));
         // Create connection
@@ -78,7 +79,7 @@ abstract class TdvbAPI {
         }
      * @APIreturn {"token": "string"}
      */
-    public static Runnable login() {
+    public static Runnable login(final FutureTask<JSONObject> future) {
         final Map<String, String> data = new HashMap<>();
         data.put("apikey", TdvbAPI.API_KEY);
         data.put("userkey", "hello");
@@ -88,6 +89,7 @@ abstract class TdvbAPI {
             public void run() {
                 try {
                     JSONObject json = TdvbAPI.sendPostRequest("login", data);
+                    future.run();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
