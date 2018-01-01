@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         String urlBody = "{\n";
         for (Map.Entry<String, String> entry : data.entrySet())
         {
-            urlBody += "\"" + entry.getKey() + "\": " + entry.getValue() + "\",";
+            urlBody += "\"" + entry.getKey() + "\": \"" + entry.getValue() + "\",";
         }
         urlBody = urlBody.substring(0, urlBody.length() - 1) + "}";
         this.postRequest(urlBody);
