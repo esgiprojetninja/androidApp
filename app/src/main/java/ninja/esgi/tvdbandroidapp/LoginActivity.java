@@ -1,5 +1,8 @@
 package ninja.esgi.tvdbandroidapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -7,8 +10,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 
 
 import org.json.JSONException;
@@ -25,10 +26,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class LoginActivity extends AppCompatActivity {
-    private SharedStoragePrefs _storage = new SharedStoragePrefs();
+    public static final String PREFS_NAME = "tdvb.android.app";
+    public final static String TOKEN_KEY = String.format("%s.tdvb_user_token", PREFS_NAME);
     private final String _postUrl = "https://api.thetvdb.com/login";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -111,10 +112,17 @@ public class LoginActivity extends AppCompatActivity {
                     if (response.code() == 200) {
                         String resString = response.body().string();
                         JSONObject json = new JSONObject(resString);
-                        Log.d("suce", json.toString());
 
                         if (json.has("token")) {
-                            _storage.saveToken(json.getString("token"));
+                            String token = json.getString("token");
+                            final Context context = getApplicationContext();
+                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putString(SharedStoragePrefs.TOKEN_KEY, token);
+                            // Commit the edition
+                            if( editor.commit() ) {
+                                    Log.d("successTokenStorage", token);
+                            }
                             // @TODO: save username in storage too
                         }
                     } else {
@@ -123,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Log.d("fuckme", "backwards");
                 } finally {
                 }
             }
