@@ -18,6 +18,10 @@ public class SharedStoragePrefs extends Service {
     public SharedStoragePrefs() {
     }
 
+    public static boolean isUserConnected() {
+        return userName != null && userKey != null;
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.

@@ -131,6 +131,8 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString(SharedStoragePrefs.TOKEN_KEY, token);
                             editor.putString(SharedStoragePrefs.USER_KEY, bodyData.get("userkey"));
                             editor.putString(SharedStoragePrefs.USER_NAME, bodyData.get("username"));
+                            SharedStoragePrefs.userName = bodyData.get("username");
+                            SharedStoragePrefs.userKey = bodyData.get("userkey");
                             if( editor.commit() ) {
                                 Log.d("successTokenStorage", token);
                                 Intent intent = new Intent(LoginActivity.this,MainActivity.class);
