@@ -1,6 +1,7 @@
 package ninja.esgi.tvdbandroidapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -132,6 +133,8 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString(SharedStoragePrefs.USER_NAME, bodyData.get("username"));
                             if( editor.commit() ) {
                                 Log.d("successTokenStorage", token);
+                                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                                startActivity(intent);
                             }
                         }
                     } else {

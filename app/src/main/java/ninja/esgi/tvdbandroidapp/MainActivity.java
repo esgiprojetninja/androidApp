@@ -17,6 +17,10 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
     }
 
+    protected boolean isUserCOnnected() {
+
+    }
+
     public void loginActivity(View view) {
         startActivity(new Intent(this, LoginActivity.class));
     }
