@@ -9,7 +9,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 
 import org.json.JSONException;
@@ -85,13 +87,20 @@ public class LoginActivity extends AppCompatActivity {
             urlBody += "\"" + entry.getKey() + "\": \"" + entry.getValue() + "\",";
         }
         urlBody = urlBody.substring(0, urlBody.length() - 1) + "}";
-        this.postRequest(urlBody);
+        this.postRequest(urlBody, data);
     }
 
-    private void postRequest(String postBody) throws IOException {
+    final private void toggleSpinner() {
+        final Spinner popupSpinner = (Spinner) findViewById(R.id.login_spinner);
+        if (popupSpinner.getVisibility() == View.VISIBLE) {
+            popupSpinner.setVisibility(View.GONE);
+        } else {
+            popupSpinner.setVisibility(View.VISIBLE);
+        }
+    }
 
+    private void postRequest(String postBody, final Map<String, String> bodyData) throws IOException {
         OkHttpClient client = new OkHttpClient();
-
         RequestBody body = RequestBody.create(JSON, postBody);
 
         Request request = new Request.Builder()
@@ -119,11 +128,11 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
                             SharedPreferences.Editor editor = preferences.edit();
                             editor.putString(SharedStoragePrefs.TOKEN_KEY, token);
-                            // Commit the edition
+                            editor.putString(SharedStoragePrefs.USER_KEY, bodyData.get("userkey"));
+                            editor.putString(SharedStoragePrefs.USER_NAME, bodyData.get("username"));
                             if( editor.commit() ) {
-                                    Log.d("successTokenStorage", token);
+                                Log.d("successTokenStorage", token);
                             }
-                            // @TODO: save username in storage too
                         }
                     } else {
                         // @TODO : Display auth fail msg
@@ -131,8 +140,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.d("fuckme", "backwards");
-                } finally {
                 }
             }
         });

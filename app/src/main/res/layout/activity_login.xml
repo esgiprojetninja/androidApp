@@ -5,6 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ninja.esgi.tvdbandroidapp.LoginActivity">
+
+    <Spinner
+        android:id="@+id/login_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/darker_gray"
+        android:spinnerMode="dialog"
+        android:visibility="gone"></Spinner>
     <LinearLayout
         android:columnCount="1"
         android:orientation="vertical"
@@ -51,6 +59,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/user_credentials_send_btn"
                 android:weightSum="1"
                 android:text="@string/send_label"
                 android:clickable="true"

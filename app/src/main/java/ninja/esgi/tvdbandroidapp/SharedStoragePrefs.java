@@ -10,6 +10,10 @@ import android.preference.PreferenceManager;
 public class SharedStoragePrefs extends Service {
     public static final String PREFS_NAME = "tdvb.android.app";
     public final static String TOKEN_KEY = String.format("%s.tdvb_user_token", PREFS_NAME);
+    public final static String USER_KEY = String.format("%s.tdvb_user_key", PREFS_NAME);
+    public final static String USER_NAME = String.format("%s.tdvb_user_name", PREFS_NAME);
+    public static String userName = null;
+    public static String userKey = null;
 
     public SharedStoragePrefs() {
     }
