@@ -5,6 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ninja.esgi.tvdbandroidapp.LoginActivity">
+
+    <Spinner
+        android:id="@+id/login_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/darker_gray"
+        android:spinnerMode="dialog"
+        android:visibility="gone"></Spinner>
     <LinearLayout
         android:columnCount="1"
         android:orientation="vertical"
@@ -23,19 +31,19 @@
         <LinearLayout
             android:columnCount="1"
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:weightSum="1"
-            android:layout_weight="4"
+            android:layout_weight="5"
             android:layout_height="match_parent">
             <TextView
                 android:layout_width="wrap_content"
-                android:text="@string/login_link"
+                android:text="@string/username_label"
                 android:weightSum="1"
                 android:layout_height="wrap_content" />
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:weightSum="1"
-                android:id="@+id/login_input"
+                android:id="@+id/username_input"
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_width="wrap_content"
@@ -43,11 +51,20 @@
                 android:weightSum="1"
                 android:layout_height="wrap_content" />
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:weightSum="1"
                 android:inputType="textPassword"
-                android:id="@+id/password_input"
+                android:id="@+id/userkey_input"
                 android:layout_height="wrap_content" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/user_credentials_send_btn"
+                android:weightSum="1"
+                android:text="@string/send_label"
+                android:clickable="true"
+                android:onClick="connectionHandler"
+                />
         </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

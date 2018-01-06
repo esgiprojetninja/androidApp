@@ -26,12 +26,20 @@
                 android:layout_height="wrap_content"
                 android:text="@string/login_link"
                 android:onClick="loginActivity"
+                android:visibility="visible"
                 android:clickable="true"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/user_greetings"
+                android:textColor="@android:color/black"
+                android:visibility="gone"
+                android:layout_height="wrap_content" />
             <Button
                 android:id="@+id/logout_link"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/logout_link"
+                android:visibility="gone"
                 android:onClick="logout"
                 android:clickable="true"/>
 
