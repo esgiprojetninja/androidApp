@@ -25,6 +25,8 @@
             android:name=".SharedStoragePrefs"
             android:enabled="true"
             android:exported="true" />
+
+        <activity android:name=".SearchSeries"></activity>
     </application>
 
 </manifest>

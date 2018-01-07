@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         this.adaptToolbar();
+        this.adaptContent();
     }
 
     private void adaptToolbar() {
@@ -39,6 +40,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void adaptContent() {
+        Button searchSeriesLink = (Button) findViewById(R.id.search_show_link_btn);
+        if (SharedStoragePrefs.isUserConnected()) {
+            searchSeriesLink.setVisibility(View.VISIBLE);
+        } else {
+            searchSeriesLink.setVisibility(View.GONE);
+        }
+    }
 
     public void loginActivity(View view) {
         startActivity(new Intent(this, LoginActivity.class));
@@ -49,4 +58,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("logout", "hovering out");
     }
 
+    public void searchSeriesActivity(View view) {
+        startActivity(new Intent(this, SearchSeries.class));
+    }
 }

@@ -31,15 +31,6 @@ public class SharedStoragePrefs extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public boolean saveToken(String token) {
-        final Context context = getApplicationContext();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(SharedStoragePrefs.TOKEN_KEY, token);
-        // Commit the edition
-        return editor.commit();
-    }
-
     public String getToken() {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         return settings.getString(SharedStoragePrefs.TOKEN_KEY, null);
