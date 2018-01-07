@@ -8,12 +8,15 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 
 public class SharedStoragePrefs extends Service {
+    public final static Long TOKEN_DURATION = Long.valueOf(60*60*24);
     public static final String PREFS_NAME = "tdvb.android.app";
     public final static String TOKEN_KEY = String.format("%s.tdvb_user_token", PREFS_NAME);
+    public final static String TOKEN_TS = String.format("%s.tdvb_user_token_ts", PREFS_NAME);
     public final static String USER_KEY = String.format("%s.tdvb_user_key", PREFS_NAME);
     public final static String USER_NAME = String.format("%s.tdvb_user_name", PREFS_NAME);
     public static String userName = null;
     public static String userKey = null;
+    public static Long tokenTs = null;
 
     public SharedStoragePrefs() {
     }
@@ -40,5 +43,14 @@ public class SharedStoragePrefs extends Service {
     public String getToken() {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         return settings.getString(SharedStoragePrefs.TOKEN_KEY, null);
+    }
+
+    public boolean isTokenExpired() {
+        Long tsLong = System.currentTimeMillis()/1000;
+        if (tokenTs == null) {
+            SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+            tokenTs = Long.valueOf(settings.getString(SharedStoragePrefs.TOKEN_TS, null));
+        }
+        return tsLong - tokenTs <= TOKEN_DURATION;
     }
 }

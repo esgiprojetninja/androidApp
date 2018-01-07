@@ -128,11 +128,15 @@ public class LoginActivity extends AppCompatActivity {
                             final Context context = getApplicationContext();
                             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
                             SharedPreferences.Editor editor = preferences.edit();
+                            Long tsLong = System.currentTimeMillis()/1000;
+                            String ts = tsLong.toString();
                             editor.putString(SharedStoragePrefs.TOKEN_KEY, token);
+                            editor.putString(SharedStoragePrefs.TOKEN_TS, ts);
                             editor.putString(SharedStoragePrefs.USER_KEY, bodyData.get("userkey"));
                             editor.putString(SharedStoragePrefs.USER_NAME, bodyData.get("username"));
                             SharedStoragePrefs.userName = bodyData.get("username");
                             SharedStoragePrefs.userKey = bodyData.get("userkey");
+                            SharedStoragePrefs.tokenTs = tsLong;
                             if( editor.commit() ) {
                                 Log.d("successTokenStorage", token);
                                 Intent intent = new Intent(LoginActivity.this,MainActivity.class);
