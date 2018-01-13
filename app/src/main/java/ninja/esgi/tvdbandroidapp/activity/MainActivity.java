@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logout(View view) {
-        // @TODO clear creadentials, kill session, redirect to mainactivity
+        this.session.clearSession();
         Log.d("logout", "hovering out");
+        this.recreate();
     }
 }

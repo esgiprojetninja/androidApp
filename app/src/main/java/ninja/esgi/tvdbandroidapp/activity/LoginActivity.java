@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-
 import java.io.IOException;
 import java.util.HashMap;
 import ninja.esgi.tvdbandroidapp.R;
