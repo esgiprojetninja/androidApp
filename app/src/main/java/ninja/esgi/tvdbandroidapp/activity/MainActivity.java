@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void logout(View view) {
         this.session.clearSession();
-        Log.d("logout", "hovering out");
+        Log.d(LOG_TAG, "hovering out");
         this.recreate();
     }
 }
