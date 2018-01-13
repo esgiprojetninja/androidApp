@@ -46,6 +46,8 @@ public class SessionStorage {
     public String getApiKey() {
         return this.apiKey;
     }
+    public String getUserName() { return this.userName; }
+    public String getSessionToken() { return this.sessionToken; }
 
     public SessionStorage setSessionToken(String token) {
         ourInstance.sessionToken = "Bearer " + token;
@@ -59,6 +61,10 @@ public class SessionStorage {
         ourInstance.userKey = key;
         return ourInstance;
     }
+    public SessionStorage setApiKey(String key) {
+        ourInstance.apiKey = key;
+        return ourInstance;
+    }
 
     public boolean saveCredentials() {
         SharedPreferences.Editor editor = this.preferences.edit();
@@ -70,6 +76,30 @@ public class SessionStorage {
         editor.putString(USER_NAME, this.userName);
         editor.putString(SESSION_TOKEN, this.sessionToken);
         return editor.commit();
+    }
+
+    public boolean isUserConnected() {
+        return this.sessionToken != null
+                && this.userName != null
+                && this.userKey != null
+                && this.apiKey != null
+                && this.sessionToken.length() > 0
+                && this.userName.length() > 0;
+    }
+
+    public void clearSession() {
+        this
+            .setUserKey(null)
+            .setSessionToken(null)
+            .setUserName(null)
+            .setApiKey(null);
+        SharedPreferences.Editor editor = this.preferences.edit();
+        editor.remove(TOKEN_TS);
+        editor.remove(USER_KEY);
+        editor.remove(USER_NAME);
+        editor.remove(API_KEY);
+        editor.remove(SESSION_TOKEN);
+        editor.apply();
     }
 
     private SessionStorage() {

@@ -1,5 +1,6 @@
 package ninja.esgi.tvdbandroidapp.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -52,7 +53,9 @@ public class LoginActivity extends AppCompatActivity {
 
     final private void showSpinner() {
         final Spinner popupSpinner = (Spinner) findViewById(R.id.login_spinner);
-        popupSpinner.setVisibility(View.VISIBLE);
+        if (popupSpinner.getVisibility() != View.VISIBLE) {
+            popupSpinner.setVisibility(View.VISIBLE);
+        }
     }
 
     final private void hideSpinner() {
@@ -78,6 +81,10 @@ public class LoginActivity extends AppCompatActivity {
         return null;
     }
 
+    final public void goToMainActivity() {
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
     public void connectionHandler(View view) throws IOException {
         final HashMap<String, String> data = this.controlFiels(view.getRootView());
         if (data == null) {
@@ -94,23 +101,33 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onCompleted() {
                 hideSpinner();
-                Log.d(LOG_TAG, "login - onCompleted");
             }
 
             @Override
             public void onError(Throwable e) {
                 hideSpinner();
-                Log.d(LOG_TAG, "login - onError");
             }
 
             @Override
             public void onNext(Response<LoginResponse> response) {
                 hideSpinner();
-                Log.d(LOG_TAG, "login - onNext");
                 if (response.isSuccessful()) {
-                    Log.d(LOG_TAG, "ah way");
-                    // @TODO coucou redirection !
-
+                    String token = response.body().getToken();
+                    if (token != null && token.length() > 0) {
+                        try {
+                            session.setSessionToken(token);
+                            session.setUserName(login.getUsername());
+                            session.setUserKey(login.getUserkey());
+                            if (session.saveCredentials()) {
+                                Log.d(LOG_TAG, "Saved credentials in session !");
+                            } else {
+                                Log.d(LOG_TAG, "FAILED to save credentials in session !");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        goToMainActivity();
+                    }
                 }
             }
         });
