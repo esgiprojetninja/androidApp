@@ -57,7 +57,9 @@ public class LoginActivity extends AppCompatActivity {
 
     final private void hideSpinner() {
         final Spinner popupSpinner = (Spinner) findViewById(R.id.login_spinner);
+        if (popupSpinner.getVisibility() != View.GONE) {
             popupSpinner.setVisibility(View.GONE);
+        }
     }
 
     private HashMap<String,String> controlFiels(View view) {
