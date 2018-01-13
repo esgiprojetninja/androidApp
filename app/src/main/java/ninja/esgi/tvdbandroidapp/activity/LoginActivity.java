@@ -31,13 +31,16 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        this.session = SessionStorage.getInstance(getApplicationContext());
+        this.apiSm = new ApiServiceManager();
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        this.session = SessionStorage.getInstance(getApplicationContext());
-        this.apiSm = new ApiServiceManager();
+
+        this.checkSession();
     }
 
     @Override
@@ -62,6 +65,13 @@ public class LoginActivity extends AppCompatActivity {
         final Spinner popupSpinner = (Spinner) findViewById(R.id.login_spinner);
         if (popupSpinner.getVisibility() != View.GONE) {
             popupSpinner.setVisibility(View.GONE);
+        }
+    }
+
+    private void checkSession() {
+        if (this.session.isUserConnected()) {
+            this.goToMainActivity();
+            return;
         }
     }
 
