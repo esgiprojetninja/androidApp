@@ -50,13 +50,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    final private void toggleSpinner() {
+    final private void showSpinner() {
         final Spinner popupSpinner = (Spinner) findViewById(R.id.login_spinner);
-        if (popupSpinner.getVisibility() == View.VISIBLE) {
+        popupSpinner.setVisibility(View.VISIBLE);
+    }
+
+    final private void hideSpinner() {
+        final Spinner popupSpinner = (Spinner) findViewById(R.id.login_spinner);
             popupSpinner.setVisibility(View.GONE);
-        } else {
-            popupSpinner.setVisibility(View.VISIBLE);
-        }
     }
 
     private HashMap<String,String> controlFiels(View view) {
@@ -81,28 +82,28 @@ public class LoginActivity extends AppCompatActivity {
             Log.d("INPUTS_ERROR", "control failed on username&||userkey");
             return;
         }
-        final Login login = new Login(this.session.getApiKey(), data.get("userkey"), data.get("username"));
+        final Login login = new Login(this.session.getApiKey(), data.get("username"), data.get("userkey"));
         this.dispatchLogin(login);
     }
 
-    private void dispatchLogin(Login login){
-        this.toggleSpinner();
+    private void dispatchLogin(final Login login){
+        this.showSpinner();
         this.apiSm.login(login, new Subscriber<Response<LoginResponse>>() {
             @Override
             public void onCompleted() {
-                toggleSpinner();
+                hideSpinner();
                 Log.d(LOG_TAG, "login - onCompleted");
             }
 
             @Override
             public void onError(Throwable e) {
-                toggleSpinner();
+                hideSpinner();
                 Log.d(LOG_TAG, "login - onError");
             }
 
             @Override
             public void onNext(Response<LoginResponse> response) {
-                toggleSpinner();
+                hideSpinner();
                 Log.d(LOG_TAG, "login - onNext");
                 if (response.isSuccessful()) {
                     Log.d(LOG_TAG, "ah way");
