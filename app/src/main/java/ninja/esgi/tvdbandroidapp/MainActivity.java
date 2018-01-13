@@ -9,7 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import ninja.esgi.tvdbandroidapp.activity.LoginActivity;
+import ninja.esgi.tvdbandroidapp.session.SharedStoragePrefs;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
             logoutBtn.setVisibility(View.VISIBLE);
             greetingsMsg.setVisibility(View.VISIBLE);
 
-            greetingsMsg.setText(SharedStoragePrefs.userName);
+            greetingsMsg.setText(SharedStoragePrefs.username);
         } else {
             loginBtn.setVisibility(View.VISIBLE);
             logoutBtn.setVisibility(View.GONE);
