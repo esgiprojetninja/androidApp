@@ -2,6 +2,7 @@ package ninja.esgi.tvdbandroidapp.networkops;
 
 import ninja.esgi.tvdbandroidapp.model.Login;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
 import retrofit2.Response;
 import rx.Subscriber;
 
@@ -16,5 +17,9 @@ public interface INetworkService {
 
     void refreshToken(String current_token, Subscriber<Response<LoginResponse>> subscriber);
     // ###########################################################################
+
+
+    // ########## USER ROUTES ####################################################
+    void getUser(String token, Subscriber<Response<UserResponse>> subscriber);
 
 }

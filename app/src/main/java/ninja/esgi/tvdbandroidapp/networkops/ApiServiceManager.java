@@ -2,6 +2,7 @@ package ninja.esgi.tvdbandroidapp.networkops;
 
 import ninja.esgi.tvdbandroidapp.model.Login;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -64,4 +65,12 @@ public class ApiServiceManager implements INetworkService {
         IRFApiService service = mRetrofit.create(IRFApiService.class);
         addObservable(service.refreshToken(current_token), subscriber);
     }
+
+    @Override
+    public void getUser(String token, Subscriber<Response<UserResponse>> subscriber) {
+        IRFApiService service = mRetrofit.create(IRFApiService.class);
+        addObservable(service.getUser(token), subscriber);
+    }
+
+
 }
