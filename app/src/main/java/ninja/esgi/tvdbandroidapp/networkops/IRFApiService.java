@@ -2,6 +2,7 @@ package ninja.esgi.tvdbandroidapp.networkops;
 
 import ninja.esgi.tvdbandroidapp.model.Login;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
 import retrofit2.Response;
 import retrofit2.http.Body;
@@ -28,5 +29,6 @@ public interface IRFApiService {
     // ### USER Routes ##################
     @GET("/user")
     Observable<Response<UserResponse>> getUser(@Header("Authorization") String token);
-
+    @GET("/user/favorites")
+    Observable<Response<UserFavoritesResponse>> getUserFavorites(@Header("Authorization") String token);
 }
