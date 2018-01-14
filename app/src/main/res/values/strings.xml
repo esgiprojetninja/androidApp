@@ -14,4 +14,6 @@
     <string name="user_info_username_favorite_display_prefix">Favorite display banner: </string>
     <string name="user_favorites_title">User favorites</string>
     <string name="user_favorites_empty_msg">You have no favorites yet</string>
+    <string name="user_ratings_title">User ratings</string>
+    <string name="user_ratings_empty_msg">You have no ratings yet</string>
 </resources>

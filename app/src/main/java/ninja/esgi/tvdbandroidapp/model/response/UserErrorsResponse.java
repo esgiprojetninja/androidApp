@@ -9,7 +9,7 @@ import java.util.List;
  * Created by dylanfoster on 14/01/18.
  */
 
-public class UserFavoritesErrorsResponse {
+public class UserErrorsResponse {
     @SerializedName("invalidFilters")
     @Expose
     private List<String> invalidFilters = null;

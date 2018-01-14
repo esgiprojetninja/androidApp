@@ -12,10 +12,14 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.List;
+
 import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.model.response.UserDetailResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserRatingsDataResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
@@ -43,6 +47,7 @@ public class UserInfoActivity extends AppCompatActivity {
 
         this.checkSession();
         this.fetchUserFavorites();
+        this.fetchUserRatings();
     }
 
     @Override
@@ -114,6 +119,23 @@ public class UserInfoActivity extends AppCompatActivity {
         }
     }
 
+    final void loadRatingsData(List<UserRatingsDataResponse> userRatingsData) {
+        TextView ratsMsg = (TextView) findViewById(R.id.user_ratings_msg_info);
+        ListView listView = (ListView) findViewById(R.id.user_ratings_list);
+
+        if (userRatingsData.size() > 0) {
+            ratsMsg.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice);
+            for (UserRatingsDataResponse fav: userRatingsData) {
+                adapter.add(fav.toString());
+            }
+            listView.setAdapter(adapter);
+        } else {
+            ratsMsg.setText(R.string.user_ratings_empty_msg);
+        }
+    }
+
     private void fetchUserInfo() {
         this.showSpinner();
         this.apiSm.getUser(this.session.getSessionToken(), new Subscriber<Response<UserResponse>>() {
@@ -157,6 +179,27 @@ public class UserInfoActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     UserFavoritesResponse userResponse = response.body();
                     loadUserFavoritesData(userResponse.getData());
+                } else {
+                    Log.d(LOG_TAG, "Failed to fetch user's favorites");
+                }
+            }
+        });
+    }
+
+    private void fetchUserRatings() {
+        this.showSpinner();
+        this.apiSm.getUserRatings(this.session.getSessionToken(), new Subscriber<Response<UserRatingsResponse>>() {
+            @Override
+            public void onCompleted() { hideSpinner(); }
+
+            @Override
+            public void onError(Throwable e) { hideSpinner(); }
+
+            @Override
+            public void onNext(Response<UserRatingsResponse> response) {
+                if (response.isSuccessful()) {
+                    UserRatingsResponse userResponse = response.body();
+                    loadRatingsData(userResponse.getData());
                 } else {
                     Log.d(LOG_TAG, "Failed to fetch user's favorites");
                 }
