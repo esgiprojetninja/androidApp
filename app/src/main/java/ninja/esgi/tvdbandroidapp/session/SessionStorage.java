@@ -6,10 +6,6 @@ import android.preference.PreferenceManager;
 
 import ninja.esgi.tvdbandroidapp.BuildConfig;
 
-/**
- * Created by dylanfoster on 13/01/18.
- */
-
 public class SessionStorage {
     public final static Long TOKEN_DURATION = Long.valueOf(60*60*24);
     public static final String PREFS_NAME = "tdvb.android.app";

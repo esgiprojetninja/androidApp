@@ -5,10 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Created by dylanfoster on 14/01/18.
- */
-
 public class UserRatingsResponse {
     @SerializedName("data")
     @Expose

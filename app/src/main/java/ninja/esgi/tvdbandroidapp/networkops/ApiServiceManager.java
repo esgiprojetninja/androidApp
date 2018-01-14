@@ -15,9 +15,6 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by dylanfoster on 13/01/18.
- */
 public class ApiServiceManager implements INetworkService {
 
     private static String LOG_TAG = "ApiServiceManager";

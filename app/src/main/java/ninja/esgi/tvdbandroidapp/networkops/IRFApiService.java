@@ -12,10 +12,6 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import rx.Observable;
 
-/**
- * Created by dylanfoster on 13/01/18.
- */
-
 public interface IRFApiService {
 
     // ### TOKEN Routes #################

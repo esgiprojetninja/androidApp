@@ -5,10 +5,6 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
-/**
- * Created by dylanfoster on 13/01/18.
- */
-
 public class MainHttpClient {
     private static final long DEFAULT_TIMEOUT_SECONDS = 90;
     private static MainHttpClient sInstance;

@@ -3,9 +3,6 @@ package ninja.esgi.tvdbandroidapp.networkops;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
-/**
- * Created by dylanfoster on 13/01/18.
- */
 public class NetTools {
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
