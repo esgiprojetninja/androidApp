@@ -6,10 +6,6 @@ import android.preference.PreferenceManager;
 
 import ninja.esgi.tvdbandroidapp.BuildConfig;
 
-/**
- * Created by dylanfoster on 13/01/18.
- */
-
 public class SessionStorage {
     public final static Long TOKEN_DURATION = Long.valueOf(60*60*24);
     public static final String PREFS_NAME = "tdvb.android.app";
@@ -18,12 +14,14 @@ public class SessionStorage {
     public final static String USER_KEY = String.format("%s.tdvb_user_key", PREFS_NAME);
     public final static String USER_NAME = String.format("%s.tdvb_user_name", PREFS_NAME);
     public final static String API_KEY = String.format("%s.tdvb_api_key", PREFS_NAME);
-    private static final SessionStorage ourInstance = new SessionStorage();
+    protected static final SessionStorage ourInstance = new SessionStorage();
 
     public String sessionToken = null;
     public String apiKey = null;
     public String userName = null;
     public String userKey = null;
+    public String userLanguage = null;
+    public String favoritesDisplaymode = null;
     public Long sessionTokenTS = null;
 
     public Context context = null;
@@ -48,6 +46,8 @@ public class SessionStorage {
     }
     public String getUserName() { return this.userName; }
     public String getSessionToken() { return this.sessionToken; }
+    public String getUserLanguage() { return this.userLanguage; }
+    public String getFavoritesDisplaymode() { return this.favoritesDisplaymode; }
 
     public SessionStorage setSessionToken(String token) {
         ourInstance.sessionToken = "Bearer " + token;
@@ -63,6 +63,14 @@ public class SessionStorage {
     }
     public SessionStorage setApiKey(String key) {
         ourInstance.apiKey = key;
+        return ourInstance;
+    }
+    public SessionStorage setUserLanguage(String lngge) {
+        ourInstance.userLanguage = lngge;
+        return ourInstance;
+    }
+    public SessionStorage setFavoriteDisplayMode(String mode) {
+        ourInstance.favoritesDisplaymode = mode;
         return ourInstance;
     }
 
@@ -85,6 +93,13 @@ public class SessionStorage {
                 && this.apiKey != null
                 && this.sessionToken.length() > 0
                 && this.userName.length() > 0;
+    }
+
+    public boolean isUserInfoLoaded() {
+        return this.userLanguage != null
+                && this.favoritesDisplaymode != null
+                && this.userLanguage.length() > 0
+                && this.favoritesDisplaymode.length() > 0;
     }
 
     public void clearSession() {

@@ -58,13 +58,14 @@
             android:weightSum="1"
             >
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/search_show_link_btn"
                 android:weightSum="1"
+                android:textAlignment="center"
                 android:clickable="true"
-                android:onClick="searchSeriesActivity"
-                android:text="@string/search_show_link"/>
+                android:onClick="userActivity"
+                android:text="@string/user_activity_link"/>
         </LinearLayout>
     </LinearLayout>
 

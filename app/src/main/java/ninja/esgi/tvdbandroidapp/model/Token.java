@@ -1,9 +1,5 @@
 package ninja.esgi.tvdbandroidapp.model;
 
-/**
- * Created by dylanfoster on 13/01/18.
- */
-
 public class Token {
 
     public static final String TOKEN_PREFIX = "Bearer ";

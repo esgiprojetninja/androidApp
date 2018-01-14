@@ -68,4 +68,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "hovering out");
         this.recreate();
     }
+
+    public void userActivity(View view) {
+        startActivity(new Intent(this, UserInfoActivity.class));
+    }
 }
