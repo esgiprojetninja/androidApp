@@ -21,4 +21,13 @@ public class UserFavoritesDataResponse {
     public void setFavorites(List<String> favorites) {
         this.favorites = favorites;
     }
+
+    public boolean checkForDisplayableFavs() {
+        if (this.favorites.size() == 0) return false;
+        for (String fav: this.favorites) {
+            if (fav != null && fav.trim().length() > 0)
+                return true;
+        }
+        return false;
+    }
 }

@@ -7,6 +7,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -97,7 +99,19 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     final private void loadUserFavoritesData(UserFavoritesDataResponse user) {
-
+        TextView favsMsg = (TextView) findViewById(R.id.user_favorites_msg_info);
+        ListView listView = (ListView) findViewById(R.id.user_favorites_list);
+        if (user.checkForDisplayableFavs()) {
+            favsMsg.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice);
+            for (String fav: user.getFavorites()) {
+                adapter.add(fav);
+            }
+            listView.setAdapter(adapter);
+        } else {
+            favsMsg.setText(R.string.user_favorites_empty_msg);
+        }
     }
 
     private void fetchUserInfo() {

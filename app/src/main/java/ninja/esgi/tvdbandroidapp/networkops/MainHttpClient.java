@@ -10,7 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
  */
 
 public class MainHttpClient {
-    private static final long DEFAULT_TIMEOUT_SECONDS = 30;
+    private static final long DEFAULT_TIMEOUT_SECONDS = 90;
     private static MainHttpClient sInstance;
     private OkHttpClient okHttpClient;
 

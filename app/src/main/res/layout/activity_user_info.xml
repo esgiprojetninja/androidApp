@@ -15,7 +15,7 @@
     <LinearLayout
         android:columnCount="1"
         android:orientation="vertical"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <android.support.v7.widget.Toolbar
@@ -38,7 +38,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/user_info_title"
-                android:drawableBottom="@color/colorAccent"
                 style="@style/Base.TextAppearance.AppCompat.Title"
                 android:textColor="@color/colorAccent"/>
             <LinearLayout
@@ -49,12 +48,11 @@
                 android:weightSum="1">
                 <TextView
                     android:layout_width="wrap_content"
-                    android:text="@string/user_info_username_language_prefix"
+                    android:text="@string/user_info_username_prefix"
                     android:weightSum="1"
                     android:textColor="@android:color/black"
                     style="@style/Base.Theme.AppCompat.Light"
                     android:layout_height="wrap_content"/>
-
                 <TextView
                     android:id="@+id/user_info_username"
                     android:layout_width="wrap_content"
@@ -69,7 +67,7 @@
                 android:weightSum="1">
                 <TextView
                     android:layout_width="wrap_content"
-                    android:text="@string/user_info_username_prefix"
+                    android:text="@string/user_info_username_language_prefix"
                     android:weightSum="1"
                     android:textColor="@android:color/black"
                     style="@style/Base.Theme.AppCompat.Light"
@@ -102,5 +100,33 @@
                     android:paddingLeft="2dp"/>
             </LinearLayout>
         </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:padding="5dp"
+        android:layout_marginTop="15dp"
+        android:weightSum="1"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/user_favorites_title"
+            style="@style/Base.TextAppearance.AppCompat.Title"
+            android:textColor="@color/colorAccent"/>
+        <ListView
+            android:visibility="gone"
+            android:id="@+id/user_favorites_list"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></ListView>
+        <TextView
+            android:layout_width="match_parent"
+            android:visibility="visible"
+            android:layout_marginTop="5dp"
+            android:id="@+id/user_favorites_msg_info"
+            android:text="@string/loading"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

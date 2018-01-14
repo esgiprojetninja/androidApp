@@ -19,7 +19,7 @@ import rx.schedulers.Schedulers;
  */
 public class ApiServiceManager implements INetworkService {
 
-    private static String TAG = "ApiServiceManager";
+    private static String LOG_TAG = "ApiServiceManager";
     private static final String URL_ENDPOINT = "https://api.thetvdb.com/";
 
     private Retrofit mRetrofit;
