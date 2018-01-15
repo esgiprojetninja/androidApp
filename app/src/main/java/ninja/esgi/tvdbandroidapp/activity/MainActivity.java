@@ -51,11 +51,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void adaptContent() {
-        Button searchSeriesLink = (Button) findViewById(R.id.search_show_link_btn);
+        Button userInfoLinkBtn = (Button) findViewById(R.id.user_info_link_btn);
+        Button searchSeriesLinkBtn = (Button) findViewById(R.id.search_show_link_btn);
         if (this.session.isUserConnected()) {
-            searchSeriesLink.setVisibility(View.VISIBLE);
+            userInfoLinkBtn.setVisibility(View.VISIBLE);
+            searchSeriesLinkBtn.setVisibility(View.VISIBLE);
         } else {
-            searchSeriesLink.setVisibility(View.GONE);
+            userInfoLinkBtn.setVisibility(View.GONE);
+            searchSeriesLinkBtn.setVisibility(View.GONE);
         }
     }
 
@@ -71,5 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void userActivity(View view) {
         startActivity(new Intent(this, UserInfoActivity.class));
+    }
+
+    public void searchSeriesActivity(View view) {
+        startActivity(new Intent(this, SearchSeriesActivity.class));
     }
 }
