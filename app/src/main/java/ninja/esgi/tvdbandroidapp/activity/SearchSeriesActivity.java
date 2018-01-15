@@ -20,6 +20,7 @@ import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.model.Search;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
+import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserDetailResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
@@ -84,7 +85,7 @@ public class SearchSeriesActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
-    final private void loadSearchedSeriesResponse(SearchSeriesResponse series) {
+    final private void loadSearchedSeriesResponse(List<SearchSeriesDataResponse> seriesData) {
         Log.d(LOG_TAG, "hey hey, my my");
     }
 
@@ -139,22 +140,30 @@ public class SearchSeriesActivity extends AppCompatActivity {
     }
 
     final private void fetchSearchSeries(Search searchParams) {
+        this.searchInProgress = true;
         this.showSpinner();
         this.apiSm.getSearchSeries(this.session.getSessionToken(), this.session.getUserLanguage(), searchParams, new Subscriber<Response<SearchSeriesResponse>>() {
             @Override
             public void onCompleted() {
+                searchInProgress = false;
                 hideSpinner();
             }
 
             @Override
             public void onError(Throwable e) {
+                Log.d(LOG_TAG, "damn tdvb, wtf man ?");
+                searchInProgress = false;
+                e.getStackTrace();
+                Log.e(LOG_TAG, "ta mere", e);
                 hideSpinner();
             }
 
             @Override
             public void onNext(Response<SearchSeriesResponse> response) {
                 if (response.isSuccessful()) {
-                    loadSearchedSeriesResponse(response.body());
+                    SearchSeriesResponse res = response.body();
+                    List<SearchSeriesDataResponse> resData = res.getData();
+                    loadSearchedSeriesResponse(resData);
                 } else {
                     Log.d(LOG_TAG, "uh oh, bad hat harry");
                 }
