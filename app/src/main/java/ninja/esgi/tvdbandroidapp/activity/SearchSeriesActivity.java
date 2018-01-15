@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import java.util.List;
 
 import ninja.esgi.tvdbandroidapp.R;
+import ninja.esgi.tvdbandroidapp.adapter.SearchedSerieAdapter;
 import ninja.esgi.tvdbandroidapp.model.Search;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
@@ -87,10 +88,8 @@ public class SearchSeriesActivity extends AppCompatActivity {
     final private void loadSearchedSeriesResponse(List<SearchSeriesDataResponse> seriesData) {
         LinearLayout lay = (LinearLayout) findViewById(R.id.search_series_result_container_layout);
         lay.setMinimumHeight(800);
-        final ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice);
-        for (SearchSeriesDataResponse tvShowData: seriesData) {
-            adapter.add(tvShowData.toString());
-        }
+        final SearchedSerieAdapter adapter = new SearchedSerieAdapter(this, seriesData);
+
         seriesResultListView = (ListView) findViewById(R.id.search_result_list);
         seriesResultListView.setAdapter(adapter);
     }
