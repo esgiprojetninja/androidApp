@@ -22,7 +22,7 @@
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".SearchSeries" />
         <activity android:name=".activity.UserInfoActivity" />
-        <activity android:name=".activity.SearchSeriesActivity"></activity>
+        <activity android:name=".activity.SearchSeriesActivity" />
     </application>
 
 </manifest>

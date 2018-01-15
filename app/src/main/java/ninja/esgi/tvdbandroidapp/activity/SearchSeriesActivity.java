@@ -45,6 +45,7 @@ public class SearchSeriesActivity extends AppCompatActivity {
 
         this.session = SessionStorage.getInstance(getApplicationContext());
         this.apiSm = new ApiServiceManager();
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
