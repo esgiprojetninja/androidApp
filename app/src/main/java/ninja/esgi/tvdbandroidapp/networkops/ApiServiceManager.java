@@ -1,6 +1,7 @@
 package ninja.esgi.tvdbandroidapp.networkops;
 
 import ninja.esgi.tvdbandroidapp.model.Login;
+import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
@@ -81,5 +82,11 @@ public class ApiServiceManager implements INetworkService {
     public void getUserRatings(String token, Subscriber<Response<UserRatingsResponse>> subscriber) {
         IRFApiService service = mRetrofit.create(IRFApiService.class);
         addObservable(service.getUserRatings(token), subscriber);
+    }
+
+    @Override
+    public void getLanguages(String token, Subscriber<Response<LanguagesResponse>> subscriber) {
+        IRFApiService service = mRetrofit.create(IRFApiService.class);
+        addObservable(service.getLanguages(token), subscriber);
     }
 }

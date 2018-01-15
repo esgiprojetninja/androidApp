@@ -1,6 +1,7 @@
 package ninja.esgi.tvdbandroidapp.networkops;
 
 import ninja.esgi.tvdbandroidapp.model.Login;
+import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
@@ -21,4 +22,8 @@ public interface INetworkService {
     void getUser(String token, Subscriber<Response<UserResponse>> subscriber);
     void getUserFavorites(String token, Subscriber<Response<UserFavoritesResponse>> subscriber);
     void getUserRatings(String token, Subscriber<Response<UserRatingsResponse>> subscriber);
+
+
+    // ########## LANGUAGES ROUTES ###############################################
+    void getLanguages(String token, Subscriber<Response<LanguagesResponse>> subscriber);
 }

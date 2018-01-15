@@ -58,9 +58,24 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/search_series_imdb_hint"
                     android:drawableBottom="@color/colorAccent"
                     android:id="@+id/search_series_imdb_id_input"
                     android:weightSum="1"/>
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/search_series_zap2it_hint"
+                    android:drawableBottom="@color/colorAccent"
+                    android:id="@+id/search_series_zap2it_hint"
+                    android:weightSum="1"/>
+                <ListView
+                    android:id="@+id/single_choice_list_view"
+                    android:layout_above="@+id/bottom_button"
+                    android:layout_width="match_parent"
+                    android:choiceMode="singleChoice"
+                    android:layout_marginBottom="15dp"
+                    android:layout_height="wrap_content"/>
 
                 <Button
                     android:layout_width="match_parent"

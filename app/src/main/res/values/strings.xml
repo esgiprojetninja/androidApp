@@ -20,4 +20,6 @@
     <string name="search_series_title">Search for series</string>
     <string name="validate">OK</string>
     <string name="search_series_name_hint">Series name</string>
+    <string name="search_series_imdb_hint">Series\' imdb id</string>
+    <string name="search_series_zap2it_hint">Series\' zap2it id</string>
 </resources>
