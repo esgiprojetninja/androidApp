@@ -7,13 +7,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
-import java.util.HashMap;
 import java.util.List;
 
 import ninja.esgi.tvdbandroidapp.R;
@@ -23,7 +21,6 @@ import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserDetailResponse;
-import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
@@ -36,7 +33,8 @@ public class SearchSeriesActivity extends AppCompatActivity {
     private SessionStorage session = null;
     private ApiServiceManager apiSm = null;
     private boolean searchInProgress = false;
-    private ListView listView;
+    private ListView languagesListView;
+    private ListView seriesResultListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,12 +80,19 @@ public class SearchSeriesActivity extends AppCompatActivity {
         for(LanguagesDataResponse languageData: languagesData) {
             adapter.add(languageData.getName());
         }
-        listView = (ListView) findViewById(R.id.single_choice_list_view);
-        listView.setAdapter(adapter);
+        languagesListView = (ListView) findViewById(R.id.single_choice_list_view);
+        languagesListView.setAdapter(adapter);
     }
 
     final private void loadSearchedSeriesResponse(List<SearchSeriesDataResponse> seriesData) {
-        Log.d(LOG_TAG, "hey hey, my my");
+        LinearLayout lay = (LinearLayout) findViewById(R.id.search_series_result_container_layout);
+        lay.setMinimumHeight(800);
+        final ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice);
+        for (SearchSeriesDataResponse tvShowData: seriesData) {
+            adapter.add(tvShowData.toString());
+        }
+        seriesResultListView = (ListView) findViewById(R.id.search_result_list);
+        seriesResultListView.setAdapter(adapter);
     }
 
     final private void fetchLanguages() {
@@ -152,10 +157,8 @@ public class SearchSeriesActivity extends AppCompatActivity {
 
             @Override
             public void onError(Throwable e) {
-                Log.d(LOG_TAG, "damn tdvb, wtf man ?");
                 searchInProgress = false;
-                e.getStackTrace();
-                Log.e(LOG_TAG, "ta mere", e);
+                Log.e(LOG_TAG, "error", e);
                 hideSpinner();
             }
 
@@ -194,7 +197,7 @@ public class SearchSeriesActivity extends AppCompatActivity {
         EditText seriesImdbIdDom = (EditText) findViewById(R.id.search_series_imdb_id_input);
         EditText serieszap2itIdDom = (EditText) findViewById(R.id.search_series_zap2it_hint);
 
-        int position = listView.getCheckedItemPosition();
+        int position = languagesListView.getCheckedItemPosition();
         if(position > -1) {
             LanguagesDataResponse language = session.getLanguages().get(position);
             searchParams.setLanguage(language.getAbbreviation());

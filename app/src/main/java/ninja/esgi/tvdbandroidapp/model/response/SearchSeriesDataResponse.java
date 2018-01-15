@@ -105,4 +105,13 @@ public class SearchSeriesDataResponse {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        String resume = this.seriesName;
+        if (this.firstAired != null && this.firstAired.trim().length() > 0) {
+            resume += " - " + this.firstAired.split("-")[0];
+        }
+        return resume;
+    }
 }
