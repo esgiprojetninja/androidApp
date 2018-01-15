@@ -1,8 +1,12 @@
 package ninja.esgi.tvdbandroidapp.networkops;
 
+import java.util.HashMap;
+
 import ninja.esgi.tvdbandroidapp.model.Login;
+import ninja.esgi.tvdbandroidapp.model.Search;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
+import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
@@ -88,5 +92,17 @@ public class ApiServiceManager implements INetworkService {
     public void getLanguages(String token, Subscriber<Response<LanguagesResponse>> subscriber) {
         IRFApiService service = mRetrofit.create(IRFApiService.class);
         addObservable(service.getLanguages(token), subscriber);
+    }
+
+    @Override
+    public void getSearchSeries(String token, String defaultLanguage, Search searchParams, Subscriber<Response<SearchSeriesResponse>> subscriber) {
+        IRFApiService service = mRetrofit.create(IRFApiService.class);
+
+        HashMap<String, String> headersMap = new HashMap<String, String>();
+        headersMap.put("Authorization", token);
+        String language = searchParams.getLanguage().length() > 0 ? searchParams.getLanguage() : defaultLanguage;
+        headersMap.put("Accept-Language", language);
+
+        addObservable(service.getSearchSeries(headersMap, searchParams.getQueriesMap()), subscriber);
     }
 }

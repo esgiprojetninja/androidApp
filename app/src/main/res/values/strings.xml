@@ -22,4 +22,5 @@
     <string name="search_series_name_hint">Series name</string>
     <string name="search_series_imdb_hint">Series\' imdb id</string>
     <string name="search_series_zap2it_hint">Series\' zap2it id</string>
+    <string name="search_series_language_choice_label">Language</string>
 </resources>

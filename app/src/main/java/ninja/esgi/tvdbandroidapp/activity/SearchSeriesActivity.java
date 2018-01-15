@@ -17,9 +17,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import ninja.esgi.tvdbandroidapp.R;
+import ninja.esgi.tvdbandroidapp.model.Search;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
+import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserDetailResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 import retrofit2.Response;
@@ -31,6 +35,7 @@ public class SearchSeriesActivity extends AppCompatActivity {
     private SessionStorage session = null;
     private ApiServiceManager apiSm = null;
     private boolean searchInProgress = false;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +65,13 @@ public class SearchSeriesActivity extends AppCompatActivity {
     }
 
     private void checkSession() {
-        // @TODO check for session languages & user info before fetching
         if(this.session.areLanguagesLoaded()) {
             this.loadLanguages(this.session.getLanguages());
         } else {
             this.fetchLanguages();
+        }
+        if (!this.session.isUserInfoLoaded()) {
+            this.fetchUserInfo();
         }
     }
 
@@ -73,20 +80,12 @@ public class SearchSeriesActivity extends AppCompatActivity {
         for(LanguagesDataResponse languageData: languagesData) {
             adapter.add(languageData.getName());
         }
-        final ListView listView = (ListView) findViewById(R.id.single_choice_list_view);
+        listView = (ListView) findViewById(R.id.single_choice_list_view);
         listView.setAdapter(adapter);
+    }
 
-        Button button = (Button) findViewById(R.id.bottom_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = listView.getCheckedItemPosition();
-                if(position > -1) {
-                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) listView.getAdapter();
-                    Toast.makeText(SearchSeriesActivity.this, adapter.getItem(position), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+    final private void loadSearchedSeriesResponse(SearchSeriesResponse series) {
+        Log.d(LOG_TAG, "hey hey, my my");
     }
 
     final private void fetchLanguages() {
@@ -112,6 +111,57 @@ public class SearchSeriesActivity extends AppCompatActivity {
         });
     }
 
+    final private void fetchUserInfo() {
+        this.showSpinner();
+        this.apiSm.getUser(this.session.getSessionToken(), new Subscriber<Response<UserResponse>>() {
+            @Override
+            public void onCompleted() {
+                hideSpinner();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                hideSpinner();
+            }
+
+            @Override
+            public void onNext(Response<UserResponse> response) {
+                if (response.isSuccessful()) {
+                    UserResponse userResponse = response.body();
+                    UserDetailResponse userDetailResponse = userResponse.getData();
+                    session.setUserLanguage(userDetailResponse.getLanguage())
+                            .setFavoriteDisplayMode(userDetailResponse.getFavoritesDisplaymode());
+                } else {
+                    Log.d(LOG_TAG, "uh oh, bad hat harry");
+                }
+            }
+        });
+    }
+
+    final private void fetchSearchSeries(Search searchParams) {
+        this.showSpinner();
+        this.apiSm.getSearchSeries(this.session.getSessionToken(), this.session.getUserLanguage(), searchParams, new Subscriber<Response<SearchSeriesResponse>>() {
+            @Override
+            public void onCompleted() {
+                hideSpinner();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                hideSpinner();
+            }
+
+            @Override
+            public void onNext(Response<SearchSeriesResponse> response) {
+                if (response.isSuccessful()) {
+                    loadSearchedSeriesResponse(response.body());
+                } else {
+                    Log.d(LOG_TAG, "uh oh, bad hat harry");
+                }
+            }
+        });
+    }
+
     final private void showSpinner() {
         this._ongoingReqs += 1;
         final Spinner popupSpinner = (Spinner) findViewById(R.id.login_spinner);
@@ -128,26 +178,43 @@ public class SearchSeriesActivity extends AppCompatActivity {
         }
     }
 
-    private HashMap<String,String> controlFiels(View view) {
-        EditText seriesNameDom = (EditText) view.findViewById(R.id.search_series_name_input);
-        EditText userkeyDom = (EditText) view.findViewById(R.id.userkey_input);
+    private Search controlFiels() {
+        Search searchParams = new Search();
+        EditText seriesNameDom = (EditText) findViewById(R.id.search_series_name_input);
+        EditText seriesImdbIdDom = (EditText) findViewById(R.id.search_series_imdb_id_input);
+        EditText serieszap2itIdDom = (EditText) findViewById(R.id.search_series_zap2it_hint);
+
+        int position = listView.getCheckedItemPosition();
+        if(position > -1) {
+            LanguagesDataResponse language = session.getLanguages().get(position);
+            searchParams.setLanguage(language.getAbbreviation());
+        }
 
         final String seriesName = (String) seriesNameDom.getText().toString();
-        final String userkey = (String) userkeyDom.getText().toString();
-
-        if ( seriesName != null && userkey != null && seriesName.length() > 0 && userkey.length() > 0) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put("username", seriesName);
-            map.put("userkey", userkey);
-            return map;
+        if ( seriesName != null && seriesName.length() > 0) {
+            searchParams.setName(seriesName);
         }
-        return null;
+
+        final String seriesImdbId = (String) seriesImdbIdDom.getText().toString();
+        if ( seriesImdbId != null && seriesImdbId.length() > 0) {
+            searchParams.setImdbId(seriesImdbId);
+        }
+
+        final String serieszap2itId = (String) serieszap2itIdDom.getText().toString();
+        if ( serieszap2itId != null && serieszap2itId.length() > 0) {
+            searchParams.setZap2itId(serieszap2itId);
+        }
+        return searchParams.checkIsValid() ? searchParams : null;
     }
 
     public void triggerSearch(View view) {
         if (!this.searchInProgress) {
-            // @TODO control text field
-            // @TODO fetch on route
+            Search searchParams = this.controlFiels();
+            if (searchParams != null) {
+                this.fetchSearchSeries(searchParams);
+            } else {
+                // @TODO display errors
+            }
         }
     }
 }

@@ -1,8 +1,12 @@
 package ninja.esgi.tvdbandroidapp.networkops;
 
+import java.util.HashMap;
+
 import ninja.esgi.tvdbandroidapp.model.Login;
+import ninja.esgi.tvdbandroidapp.model.Search;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
+import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
@@ -26,4 +30,7 @@ public interface INetworkService {
 
     // ########## LANGUAGES ROUTES ###############################################
     void getLanguages(String token, Subscriber<Response<LanguagesResponse>> subscriber);
+
+    // ########## SEARCH SERIES ROUTES ###########################################
+    void getSearchSeries(String token, String defaultLanguage, Search searchParams, Subscriber<Response<SearchSeriesResponse>> subscriber);
 }

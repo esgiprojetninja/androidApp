@@ -32,8 +32,9 @@
             android:layout_width="match_parent"
             android:padding="5dp"
             android:weightSum="1"
-            android:layout_weight="2"
-            android:layout_height="wrap_content">
+            android:layout_weight="4"
+            android:overScrollMode="ifContentScrolls"
+            android:layout_height="match_parent">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,8 +47,7 @@
                 android:layout_width="match_parent"
                 android:padding="5dp"
                 android:weightSum="1"
-                android:layout_weight="4"
-                android:layout_height="wrap_content">
+                android:layout_height="400dp">
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -69,29 +69,37 @@
                     android:drawableBottom="@color/colorAccent"
                     android:id="@+id/search_series_zap2it_hint"
                     android:weightSum="1"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="1"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/search_series_language_choice_label"
+                    android:textColor="@android:color/black"/>
                 <ListView
                     android:id="@+id/single_choice_list_view"
                     android:layout_above="@+id/bottom_button"
                     android:layout_width="match_parent"
                     android:choiceMode="singleChoice"
                     android:layout_marginBottom="15dp"
+                    android:weightSum="1"
                     android:layout_height="wrap_content"/>
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:weightSum="1"
-                    android:text="@string/validate"
-                    android:clickable="true"
-                    android:onClick="triggerSearch"/>
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:padding="5dp"
-                    android:weightSum="1"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content">
-                </LinearLayout>
+            </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1"
+                android:text="@string/validate"
+                android:clickable="true"
+                android:onClick="triggerSearch"/>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:padding="5dp"
+                android:id="@+id/search_result_display"
+                android:weightSum="1"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
