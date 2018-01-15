@@ -24,4 +24,10 @@
     <string name="search_series_zap2it_hint">Series\' zap2it id</string>
     <string name="search_series_language_choice_label">Language</string>
     <string name="search_series_result_title">TV Shows - Search result</string>
+    <string name="search_series_fragment_head_title">TV Show details</string>
+    <string name="search_series_fragment_add_to_fav">Add to favorite</string>
+    <string name="search_series_fragment_rm_from_fav">Remove from favorite</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
