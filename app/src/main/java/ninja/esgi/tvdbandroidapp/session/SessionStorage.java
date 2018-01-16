@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.List;
+
 import ninja.esgi.tvdbandroidapp.BuildConfig;
+import ninja.esgi.tvdbandroidapp.model.response.LanguagesDataResponse;
 
 public class SessionStorage {
     public final static Long TOKEN_DURATION = Long.valueOf(60*60*24);
@@ -23,6 +26,7 @@ public class SessionStorage {
     public String userLanguage = null;
     public String favoritesDisplaymode = null;
     public Long sessionTokenTS = null;
+    public List<LanguagesDataResponse> languages;
 
     public Context context = null;
     public SharedPreferences preferences = null;
@@ -48,6 +52,7 @@ public class SessionStorage {
     public String getSessionToken() { return this.sessionToken; }
     public String getUserLanguage() { return this.userLanguage; }
     public String getFavoritesDisplaymode() { return this.favoritesDisplaymode; }
+    public List<LanguagesDataResponse> getLanguages() { return this.languages; }
 
     public SessionStorage setSessionToken(String token) {
         ourInstance.sessionToken = "Bearer " + token;
@@ -73,6 +78,10 @@ public class SessionStorage {
         ourInstance.favoritesDisplaymode = mode;
         return ourInstance;
     }
+    public SessionStorage setLanguages(List langs) {
+        ourInstance.languages = langs;
+        return ourInstance;
+    }
 
     public boolean saveCredentials() {
         SharedPreferences.Editor editor = this.preferences.edit();
@@ -87,19 +96,23 @@ public class SessionStorage {
     }
 
     public boolean isUserConnected() {
-        return this.sessionToken != null
-                && this.userName != null
-                && this.userKey != null
-                && this.apiKey != null
-                && this.sessionToken.length() > 0
-                && this.userName.length() > 0;
+        return ourInstance.sessionToken != null
+                && ourInstance.userName != null
+                && ourInstance.userKey != null
+                && ourInstance.apiKey != null
+                && ourInstance.sessionToken.length() > 0
+                && ourInstance.userName.length() > 0;
     }
 
     public boolean isUserInfoLoaded() {
-        return this.userLanguage != null
-                && this.favoritesDisplaymode != null
-                && this.userLanguage.length() > 0
-                && this.favoritesDisplaymode.length() > 0;
+        return ourInstance.userLanguage != null
+                && ourInstance.favoritesDisplaymode != null
+                && ourInstance.userLanguage.length() > 0
+                && ourInstance.favoritesDisplaymode.length() > 0;
+    }
+
+    public boolean areLanguagesLoaded() {
+        return (ourInstance.languages != null && ourInstance.languages.size() > 0) ? true : false;
     }
 
     public void clearSession() {

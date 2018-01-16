@@ -153,7 +153,10 @@ public class UserInfoActivity extends AppCompatActivity {
             public void onNext(Response<UserResponse> response) {
                 if (response.isSuccessful()) {
                     UserResponse userResponse = response.body();
-                    loadBasicData(userResponse.getData());
+                    UserDetailResponse userDetailResponse = userResponse.getData();
+                    session.setUserLanguage(userDetailResponse.getLanguage())
+                            .setFavoriteDisplayMode(userDetailResponse.getFavoritesDisplaymode());
+                    loadBasicData(userDetailResponse);
                 } else {
                     Log.d(LOG_TAG, "uh oh, bad hat harry");
                 }

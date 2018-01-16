@@ -9,7 +9,7 @@ public class UserFavoritesResponse {
     private UserFavoritesDataResponse data;
     @SerializedName("errors")
     @Expose
-    private UserErrorsResponse errors;
+    private GenericErrorsResponse errors;
 
     public UserFavoritesDataResponse getData() {
         return data;
@@ -19,11 +19,11 @@ public class UserFavoritesResponse {
         this.data = data;
     }
 
-    public UserErrorsResponse getErrors() {
+    public GenericErrorsResponse getErrors() {
         return errors;
     }
 
-    public void setErrors(UserErrorsResponse errors) {
+    public void setErrors(GenericErrorsResponse errors) {
         this.errors = errors;
     }
 }

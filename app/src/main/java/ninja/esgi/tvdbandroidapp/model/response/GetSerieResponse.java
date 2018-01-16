@@ -3,26 +3,20 @@ package ninja.esgi.tvdbandroidapp.model.response;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
-public class UserRatingsResponse {
+public class GetSerieResponse {
     @SerializedName("data")
     @Expose
-    private List<UserRatingsDataResponse> data;
+    private GetSerieDataResponse data;
 
     @SerializedName("errors")
     @Expose
     private GenericErrorsResponse errors;
 
-    @SerializedName("links")
-    @Expose
-    private UserRatingsLinksResponse links;
-
-    public List<UserRatingsDataResponse> getData() {
+    public GetSerieDataResponse getData() {
         return data;
     }
 
-    public void setData(List<UserRatingsDataResponse> data) {
+    public void setData(GetSerieDataResponse data) {
         this.data = data;
     }
 
@@ -32,13 +26,5 @@ public class UserRatingsResponse {
 
     public void setErrors(GenericErrorsResponse errors) {
         this.errors = errors;
-    }
-
-    public UserRatingsLinksResponse getLinks() {
-        return links;
-    }
-
-    public void setLinks(UserRatingsLinksResponse links) {
-        this.links = links;
     }
 }
