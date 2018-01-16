@@ -5,6 +5,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
@@ -17,6 +20,14 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
 
     public SearchSeriesDataDetailFragment() {
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.activity_search_series, container, true);
+    }
+
 
 
     @Override

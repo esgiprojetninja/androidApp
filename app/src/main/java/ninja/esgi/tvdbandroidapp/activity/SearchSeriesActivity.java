@@ -1,5 +1,7 @@
 package ninja.esgi.tvdbandroidapp.activity;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +18,7 @@ import java.util.List;
 
 import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.adapter.SearchedSerieAdapter;
+import ninja.esgi.tvdbandroidapp.fragment.SearchSeriesDataDetailFragment;
 import ninja.esgi.tvdbandroidapp.model.Search;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
@@ -85,6 +88,17 @@ public class SearchSeriesActivity extends AppCompatActivity {
         languagesListView.setAdapter(adapter);
     }
 
+    final public void clickCallback(SearchSeriesDataResponse tvShow) {
+        Log.d(LOG_TAG, "oh yeah");
+        SearchSeriesDataDetailFragment fragment = new SearchSeriesDataDetailFragment();
+        fragment.tvShow = tvShow;
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentManager.beginTransaction();
+        fragmentTransaction.show(fragment);
+    }
+
     final private void loadSearchedSeriesResponse(List<SearchSeriesDataResponse> seriesData) {
         LinearLayout lay = (LinearLayout) findViewById(R.id.search_series_result_container_layout);
         lay.setMinimumHeight(800);
@@ -92,6 +106,12 @@ public class SearchSeriesActivity extends AppCompatActivity {
 
         seriesResultListView = (ListView) findViewById(R.id.search_result_list);
         seriesResultListView.setAdapter(adapter);
+//        seriesResultListView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.d(LOG_TAG, adapter.clickedTvShow.toString());
+//            }
+//        });
     }
 
     final private void fetchLanguages() {

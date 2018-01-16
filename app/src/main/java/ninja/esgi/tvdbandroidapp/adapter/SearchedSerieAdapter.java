@@ -1,8 +1,8 @@
 package ninja.esgi.tvdbandroidapp.adapter;
 
-import android.app.DialogFragment;
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,26 +11,21 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import ninja.esgi.tvdbandroidapp.fragment.SearchSeriesDataDetailFragment;
+import ninja.esgi.tvdbandroidapp.activity.SearchSeriesActivity;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
 
 
 public class SearchedSerieAdapter extends BaseAdapter {
+    final private static String LOG_TAG = "SearchedSerieAdapter";
     private List<SearchSeriesDataResponse> seriesData;
-    private Context mContext;
+    private SearchSeriesActivity ssActivity;
     private LayoutInflater inflater;
+    public SearchSeriesDataResponse clickedTvShow;
 
-    public SearchedSerieAdapter(Context context, List<SearchSeriesDataResponse> seriesData) {
+    public SearchedSerieAdapter(SearchSeriesActivity ssActivity, List<SearchSeriesDataResponse> seriesData) {
         this.seriesData = seriesData;
-        this.mContext = context;
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    final private void launchPopupActivity(SearchSeriesDataResponse tvShow) {
-        SearchSeriesDataDetailFragment fragment = new SearchSeriesDataDetailFragment();
-        fragment.tvShow = tvShow;
-//        fragment.show(mContext.)
-        // @TODO : callback on activity to launch fragment from there on !
+        this.ssActivity = ssActivity;
+        this.inflater = (LayoutInflater) ssActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -70,7 +65,7 @@ public class SearchedSerieAdapter extends BaseAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchPopupActivity(ssdr);
+                ssActivity.clickCallback(ssdr);
             }
         });
         return convertView;
