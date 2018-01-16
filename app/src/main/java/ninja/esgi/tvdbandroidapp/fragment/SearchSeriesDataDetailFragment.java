@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 
 import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
@@ -25,28 +26,35 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.activity_search_series, container, true);
+        View view = inflater.inflate(R.layout.fragment_search_series_data_detail, container, true);
+
+        // @TODO GET series/{id}
+        // @TODO GET series/{id}/actors
+        // @TODO GET series/{id}/episodes
+        // @TODO GET series/{id}/images
+        // @TODO GET episodes/{id} on click ?
+        // @TODO GET episodes/{id} on click ?
+        // @TODO GET /user/favorites
+        // @TODO GET /user/ratings
+        // @TODO PUT /user/ratings/{itemType}/{itemId}/{itemRating}
+        // @TODO DELETE /user/ratings/{itemType}/{itemId}
+        // @TODO PUT /user/favorites/{id}
+        // @TODO DELETE /user/favorites/{id}
+
+        return view;
     }
 
 
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.search_series_fragment_head_title)
-                .setPositiveButton(R.string.search_series_fragment_add_to_fav, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // FIRE ZE MISSILES!
-                    }
-                })
-                .setNegativeButton(R.string.search_series_fragment_rm_from_fav, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
-        // Create the AlertDialog object and return it
-        return builder.create();
+        // The only reason you might override this method when using onCreateView() is
+        // to modify any dialog characteristics. For example, the dialog includes a
+        // title by default, but your custom layout might not need it. So here you can
+        // remove the dialog title, but you must call the superclass to get the Dialog.
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
     }
 
 

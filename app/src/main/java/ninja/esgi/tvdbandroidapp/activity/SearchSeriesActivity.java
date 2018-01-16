@@ -90,13 +90,13 @@ public class SearchSeriesActivity extends AppCompatActivity {
 
     final public void clickCallback(SearchSeriesDataResponse tvShow) {
         Log.d(LOG_TAG, "oh yeah");
-        SearchSeriesDataDetailFragment fragment = new SearchSeriesDataDetailFragment();
-        fragment.tvShow = tvShow;
+        SearchSeriesDataDetailFragment newFragment = new SearchSeriesDataDetailFragment();
+        newFragment.tvShow = tvShow;
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentManager.beginTransaction();
-        fragmentTransaction.show(fragment);
+
+        // The device is using a large layout, so show the fragment as a dialog
+        newFragment.show(fragmentManager, "dialog");
     }
 
     final private void loadSearchedSeriesResponse(List<SearchSeriesDataResponse> seriesData) {
