@@ -3,6 +3,7 @@ package ninja.esgi.tvdbandroidapp.networkops;
 import java.util.HashMap;
 
 import ninja.esgi.tvdbandroidapp.model.Login;
+import ninja.esgi.tvdbandroidapp.model.response.GetSerieResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
@@ -15,6 +16,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import rx.Observable;
@@ -27,7 +29,6 @@ public interface IRFApiService {
 
     @GET("/refresh_token")
     Observable<Response<LoginResponse>> refreshToken(@Header("Authorization") String token);
-    // ##################################
 
 
     // ### USER Routes ##################
@@ -48,4 +49,10 @@ public interface IRFApiService {
     @GET("search/series")
     Observable<Response<SearchSeriesResponse>> getSearchSeries(@HeaderMap HashMap<String, String> headers,
                                                                @QueryMap HashMap<String, String> searchParams);
+
+
+    // ### SERIES Routes ################
+    @GET("/series/{id}")
+    Observable<Response<GetSerieResponse>> getSerie(@HeaderMap HashMap<String, String> headers,
+                                                           @Path("id") String id);
 }

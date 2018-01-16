@@ -93,6 +93,14 @@ public class SearchSeriesActivity extends AppCompatActivity {
         SearchSeriesDataDetailFragment newFragment = new SearchSeriesDataDetailFragment();
         newFragment.tvShow = tvShow;
 
+        int position = languagesListView.getCheckedItemPosition();
+        if(position > -1) {
+            newFragment.language = session.getLanguages().get(position).getAbbreviation();
+        } else {
+            newFragment.language = session.getUserLanguage();
+        }
+
+
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         // The device is using a large layout, so show the fragment as a dialog

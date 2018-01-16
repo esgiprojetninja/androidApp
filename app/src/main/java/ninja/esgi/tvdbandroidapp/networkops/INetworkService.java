@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import ninja.esgi.tvdbandroidapp.model.Login;
 import ninja.esgi.tvdbandroidapp.model.Search;
+import ninja.esgi.tvdbandroidapp.model.response.GetSerieResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
@@ -31,6 +32,11 @@ public interface INetworkService {
     // ########## LANGUAGES ROUTES ###############################################
     void getLanguages(String token, Subscriber<Response<LanguagesResponse>> subscriber);
 
+
     // ########## SEARCH SERIES ROUTES ###########################################
     void getSearchSeries(String token, String defaultLanguage, Search searchParams, Subscriber<Response<SearchSeriesResponse>> subscriber);
+
+
+    // ########## SERIES ROUTES ##################################################
+    void getSerie(String token, String language, Long id, Subscriber<Response<GetSerieResponse>> subscriber);
 }
