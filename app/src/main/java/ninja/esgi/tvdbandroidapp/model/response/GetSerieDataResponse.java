@@ -66,9 +66,10 @@ public class GetSerieDataResponse {
     @Expose
     private String runtime;
 
+// #########  Tdvb's API swagger is f*** up. This is a string thank you very much
     @SerializedName("seriesId")
     @Expose
-    private Long seriesId;
+    private String seriesId;
 
     @SerializedName("seriesName")
     @Expose
@@ -76,7 +77,7 @@ public class GetSerieDataResponse {
 
     @SerializedName("siteRating")
     @Expose
-    private Long siteRating;
+    private Double siteRating;
 
     @SerializedName("siteRatingCount")
     @Expose
@@ -210,11 +211,11 @@ public class GetSerieDataResponse {
         this.runtime = runtime;
     }
 
-    public Long getSeriesId() {
+    public String getSeriesId() {
         return seriesId;
     }
 
-    public void setSeriesId(Long seriesId) {
+    public void setSeriesId(String seriesId) {
         this.seriesId = seriesId;
     }
 
@@ -226,11 +227,11 @@ public class GetSerieDataResponse {
         this.seriesName = seriesName;
     }
 
-    public Long getSiteRating() {
+    public Double getSiteRating() {
         return siteRating;
     }
 
-    public void setSiteRating(Long siteRating) {
+    public void setSiteRating(Double siteRating) {
         this.siteRating = siteRating;
     }
 
