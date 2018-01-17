@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.model.response.GetSerieDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.GetSerieResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 import retrofit2.Response;
@@ -28,11 +30,13 @@ import rx.Subscriber;
  */
 public class SearchSeriesDataDetailFragment extends DialogFragment {
     final private static String LOG_TAG = "SearchSeriesDDFragment";
+    private int _neeededResponses = 2;
     public SearchSeriesDataResponse tvShow;
     public String language;
     private int _ongoingReqs = 0;
     private SessionStorage session = null;
     private ApiServiceManager apiSm = null;
+    private GetSerieDataResponse tvShowDetails = null;
     View view;
 
     public SearchSeriesDataDetailFragment() {
@@ -45,7 +49,10 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
         this.view = inflater.inflate(R.layout.fragment_search_series_data_detail, container, true);
         this.session = SessionStorage.getInstance(getContext());
         this.apiSm = new ApiServiceManager();
+        this._neeededResponses = 2;
         this.fetchData();
+
+        // @TODO make add favorite dependant on user's favorites
 
         // @TODO GET series/{id}/actors
         // @TODO GET series/{id}/episodes
@@ -90,18 +97,28 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
         }
     }
 
-    final private void loadSerieBasicDetails(GetSerieDataResponse data) {
+    final private void adaptFavoriteBtnDisplay() {
+        Button toggleFavoriteBtn = (Button) view.findViewById(R.id.favoriteHandler);
+        if (session.isShowFavorite(tvShowDetails.getId().toString())) {
+            toggleFavoriteBtn.setText(getResources().getString(R.string.series_rm_from_favorites));
+        } else {
+            toggleFavoriteBtn.setText(getResources().getString(R.string.series_add_to_favorites));
+        }
+        toggleFavoriteBtn.setVisibility(View.VISIBLE);
+    }
+
+    final private void loadSerieBasicDetails() {
         TextView seriesName = (TextView) view.findViewById(R.id.series_name);
-        seriesName.setText(data.getSeriesName());
+        seriesName.setText(tvShowDetails.getSeriesName());
 
         TextView seriesRating = (TextView) view.findViewById(R.id.series_rating);
-        seriesRating.setText(data.getRatingsOverview(getResources()));
+        seriesRating.setText(tvShowDetails.getRatingsOverview(getResources()));
 
         TextView seriesStatus = (TextView) view.findViewById(R.id.series_status);
         TextView seriesDisplayDate = (TextView) view.findViewById(R.id.air_display_date);
         seriesDisplayDate.setVisibility(View.GONE);
         String statusPref = getResources().getString(R.string.series_status_prefix)+ " " ;
-        switch (data.getStatus().toLowerCase()) {
+        switch (tvShowDetails.getStatus().toLowerCase()) {
             case "ended": {
                 seriesStatus.setText(statusPref + getResources().getString(R.string.series_status_ended));
                 seriesStatus.setTextColor(Color.BLACK);
@@ -111,58 +128,58 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
                 seriesStatus.setText(statusPref + getResources().getString(R.string.series_status_continuing));
                 seriesStatus.setTextColor(Color.GREEN);
                 seriesDisplayDate.setVisibility(View.VISIBLE);
-                seriesDisplayDate.setText(data.getDisplayedDate());
+                seriesDisplayDate.setText(tvShowDetails.getDisplayedDate());
                 break;
             }
             default: {
-                seriesStatus.setText(statusPref + data.getStatus());
+                seriesStatus.setText(statusPref + tvShowDetails.getStatus());
                 seriesStatus.setTextColor(Color.LTGRAY);
                 break;
             }
         }
 
         TextView seriesFirstAirDate = (TextView) view.findViewById(R.id.first_aired);
-        seriesFirstAirDate.setText(getResources().getString(R.string.series_first_aired_prefix) + " " + data.getFirstAired());
+        seriesFirstAirDate.setText(getResources().getString(R.string.series_first_aired_prefix) + " " + tvShowDetails.getFirstAired());
 
         TextView seriesGenres = (TextView) view.findViewById(R.id.genre);
-        if (data.getGenre().size() > 0) {
-            seriesGenres.setText(getResources().getString(R.string.series_genres_prefix) + " " + TextUtils.join(", ", data.getGenre()));
+        if (tvShowDetails.getGenre().size() > 0) {
+            seriesGenres.setText(getResources().getString(R.string.series_genres_prefix) + " " + TextUtils.join(", ", tvShowDetails.getGenre()));
         } else {
             seriesGenres.setVisibility(View.GONE);
         }
 
         TextView seriesNetwork = (TextView) view.findViewById(R.id.network);
-        if (data.getNetwork() != null && data.getNetwork().trim().length() > 0 ) {
-            seriesNetwork.setText(getResources().getString(R.string.series_network_prefix) + " " + data.getNetwork());
+        if (tvShowDetails.getNetwork() != null && tvShowDetails.getNetwork().trim().length() > 0 ) {
+            seriesNetwork.setText(getResources().getString(R.string.series_network_prefix) + " " + tvShowDetails.getNetwork());
         }  else {
             seriesNetwork.setText(R.string.series_unknown_network);
         }
 
         TextView seriesOverview = (TextView) view.findViewById(R.id.overview);
-        if (data.getOverview() != null && data.getOverview().length() > 0 ) {
-            seriesOverview.setText(getResources().getString(R.string.series_overview_prefix) + " " + data.getOverview());
+        if (tvShowDetails.getOverview() != null && tvShowDetails.getOverview().length() > 0 ) {
+            seriesOverview.setText(getResources().getString(R.string.series_overview_prefix) + " " + tvShowDetails.getOverview());
         }  else {
             seriesOverview.setText(getResources().getString(R.string.series_no_overview));
         }
 
         TextView seriesImdbId = (TextView) view.findViewById(R.id.imdb_id);
-        if (data.getImdbId() != null && data.getImdbId().trim().length() > 0 ) {
-            seriesImdbId.setText(getResources().getString(R.string.series_imdb_id_prefix) + " " + data.getImdbId());
+        if (tvShowDetails.getImdbId() != null && tvShowDetails.getImdbId().trim().length() > 0 ) {
+            seriesImdbId.setText(getResources().getString(R.string.series_imdb_id_prefix) + " " + tvShowDetails.getImdbId());
         }  else {
             seriesImdbId.setVisibility(View.GONE);
         }
 
         TextView seriesZap2itId = (TextView) view.findViewById(R.id.zap2it_id);
-        if (data.getZap2itId() != null && data.getZap2itId().trim().length() > 0 ) {
-            seriesZap2itId.setText(getResources().getString(R.string.series_zap2it_id_prefix) + " " + data.getZap2itId());
+        if (tvShowDetails.getZap2itId() != null && tvShowDetails.getZap2itId().trim().length() > 0 ) {
+            seriesZap2itId.setText(getResources().getString(R.string.series_zap2it_id_prefix) + " " + tvShowDetails.getZap2itId());
         }  else {
             seriesZap2itId.setVisibility(View.GONE);
         }
 
 
         TextView seriesLastUpdated = (TextView) view.findViewById(R.id.last_updated);
-        if (data.getLastUpdated() != null && data.getLastUpdated() > 0 ) {
-            seriesLastUpdated.setText(getResources().getString(R.string.series_lastupdated_prefix) + " " + data.getFormatedLastUpdated());
+        if (tvShowDetails.getLastUpdated() != null && tvShowDetails.getLastUpdated() > 0 ) {
+            seriesLastUpdated.setText(getResources().getString(R.string.series_lastupdated_prefix) + " " + tvShowDetails.getFormatedLastUpdated());
         }  else {
             seriesLastUpdated.setVisibility(View.GONE);
         }
@@ -186,9 +203,14 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
             @Override
             public void onNext(Response<GetSerieResponse> response) {
                 if (response.isSuccessful()) {
+                    _neeededResponses -= 1;
                     GetSerieResponse res = response.body();
                     GetSerieDataResponse resData = res.getData();
-                    loadSerieBasicDetails(resData);
+                    tvShowDetails = resData;
+                    loadSerieBasicDetails();
+                    if (_neeededResponses == 0) {
+                        adaptFavoriteBtnDisplay();
+                    }
                     Log.d(LOG_TAG, "yeah mofo");
                 } else {
                     Log.d(LOG_TAG, "uh oh, bad hat harry");
@@ -197,7 +219,97 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
         });
     }
 
+    private void fetchUserFavorites() {
+        this.showSpinner();
+        this.apiSm.getUserFavorites(this.session.getSessionToken(), new Subscriber<Response<UserFavoritesResponse>>() {
+            @Override
+            public void onCompleted() {
+                hideSpinner();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                hideSpinner();
+            }
+
+            @Override
+            public void onNext(Response<UserFavoritesResponse> response) {
+                if (response.isSuccessful()) {
+                    _neeededResponses -= 1;
+                    UserFavoritesResponse userResponse = response.body();
+                    session.setUserFavoritesShows(userResponse.getData().getFavorites());
+                    if (_neeededResponses == 0) {
+                        adaptFavoriteBtnDisplay();
+                    }
+                } else {
+                    Log.d(LOG_TAG, "Failed to fetch user's favorites");
+                }
+            }
+        });
+    }
+
     final private void fetchData() {
         this.fetchSerie();
+        this.fetchUserFavorites();
+    }
+
+    final private void putFavorite(String tvShowID) {
+        this.showSpinner();
+        this.apiSm.putUserFavorite(this.session.getSessionToken(), tvShowID, new Subscriber<Response<UserFavoritesResponse>>() {
+            @Override
+            public void onCompleted() {
+                hideSpinner();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                hideSpinner();
+            }
+
+            @Override
+            public void onNext(Response<UserFavoritesResponse> response) {
+                if (response.isSuccessful()) {
+                    UserFavoritesResponse userResponse = response.body();
+                    session.setUserFavoritesShows(userResponse.getData().getFavorites());
+                    adaptFavoriteBtnDisplay();
+                } else {
+                    Log.d(LOG_TAG, "Failed to update user's favorites");
+                }
+            }
+        });
+    }
+
+    final private void deleteFavorite(String tvShowID) {
+        this.showSpinner();
+        this.apiSm.deleteUserFavorite(this.session.getSessionToken(), tvShowID, new Subscriber<Response<UserFavoritesResponse>>() {
+            @Override
+            public void onCompleted() {
+                hideSpinner();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                hideSpinner();
+            }
+
+            @Override
+            public void onNext(Response<UserFavoritesResponse> response) {
+                if (response.isSuccessful()) {
+                    UserFavoritesResponse userResponse = response.body();
+                    session.setUserFavoritesShows(userResponse.getData().getFavorites());
+                    adaptFavoriteBtnDisplay();
+                } else {
+                    Log.d(LOG_TAG, "Failed to update user's favorites");
+                }
+            }
+        });
+    }
+
+    public void handleFavorite() {
+        if (session.isShowFavorite(tvShowDetails.getId().toString())) {
+            this.deleteFavorite(tvShowDetails.getId().toString());
+        } else {
+            this.putFavorite(tvShowDetails.getId().toString());
+        }
     }
 }

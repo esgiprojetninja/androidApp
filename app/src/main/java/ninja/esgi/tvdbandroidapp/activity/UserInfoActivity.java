@@ -182,6 +182,7 @@ public class UserInfoActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     UserFavoritesResponse userResponse = response.body();
                     loadUserFavoritesData(userResponse.getData());
+                    session.setUserFavoritesShows(userResponse.getData().getFavorites());
                 } else {
                     Log.d(LOG_TAG, "Failed to fetch user's favorites");
                 }
@@ -209,4 +210,5 @@ public class UserInfoActivity extends AppCompatActivity {
             }
         });
     }
+
 }

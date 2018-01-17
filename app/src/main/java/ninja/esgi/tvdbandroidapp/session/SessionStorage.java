@@ -27,6 +27,7 @@ public class SessionStorage {
     public String favoritesDisplaymode = null;
     public Long sessionTokenTS = null;
     public List<LanguagesDataResponse> languages;
+    public List<String> userFavoritesShows = null;
 
     public Context context = null;
     public SharedPreferences preferences = null;
@@ -37,6 +38,8 @@ public class SessionStorage {
         ourInstance.preferences = PreferenceManager.getDefaultSharedPreferences(context);
         ourInstance.defineApiKey();
         return ourInstance;
+    }
+    private SessionStorage() {
     }
 
     public void defineApiKey() {
@@ -53,6 +56,7 @@ public class SessionStorage {
     public String getUserLanguage() { return this.userLanguage; }
     public String getFavoritesDisplaymode() { return this.favoritesDisplaymode; }
     public List<LanguagesDataResponse> getLanguages() { return this.languages; }
+    public List<String> getUserFavoritesShows() { return this.userFavoritesShows; }
 
     public SessionStorage setSessionToken(String token) {
         ourInstance.sessionToken = "Bearer " + token;
@@ -80,6 +84,10 @@ public class SessionStorage {
     }
     public SessionStorage setLanguages(List langs) {
         ourInstance.languages = langs;
+        return ourInstance;
+    }
+    public SessionStorage setUserFavoritesShows(List userFavoritesShows) {
+        ourInstance.userFavoritesShows = userFavoritesShows;
         return ourInstance;
     }
 
@@ -130,6 +138,11 @@ public class SessionStorage {
         editor.apply();
     }
 
-    private SessionStorage() {
+    public boolean isShowFavorite(String showId) {
+        if (getUserFavoritesShows() == null) return false;
+        for(String id: getUserFavoritesShows()) {
+            if (id.compareTo(showId) == 0) return true;
+        }
+        return false;
     }
 }

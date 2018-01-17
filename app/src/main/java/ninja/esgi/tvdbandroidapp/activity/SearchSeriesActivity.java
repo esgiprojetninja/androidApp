@@ -39,6 +39,7 @@ public class SearchSeriesActivity extends AppCompatActivity {
     private boolean searchInProgress = false;
     private ListView languagesListView;
     private ListView seriesResultListView;
+    private SearchSeriesDataDetailFragment newFragment = new SearchSeriesDataDetailFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +90,6 @@ public class SearchSeriesActivity extends AppCompatActivity {
     }
 
     final public void clickCallback(SearchSeriesDataResponse tvShow) {
-        Log.d(LOG_TAG, "oh yeah");
-        SearchSeriesDataDetailFragment newFragment = new SearchSeriesDataDetailFragment();
         newFragment.tvShow = tvShow;
 
         int position = languagesListView.getCheckedItemPosition();
@@ -256,5 +255,9 @@ public class SearchSeriesActivity extends AppCompatActivity {
                 // @TODO display errors
             }
         }
+    }
+
+    public void handleFavorite(View view) {
+        newFragment.handleFavorite();
     }
 }
