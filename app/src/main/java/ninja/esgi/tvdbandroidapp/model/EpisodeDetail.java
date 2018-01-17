@@ -142,11 +142,11 @@ public class EpisodeDetail implements Comparable<EpisodeDetail> {
     public int compareTo(@NonNull EpisodeDetail episodeDetail) {
         if (this == null) return 1;
         if (episodeDetail == null) return -1;
-        if (this.absoluteNumber == null)
+        if (this.airedEpisodeNumber == null)
             return 1;
-        if (episodeDetail.getAbsoluteNumber() == null)
+        if (episodeDetail.getAiredEpisodeNumber() == null)
             return -1;
 
-        return this.getAbsoluteNumber().compareTo(episodeDetail.getAbsoluteNumber());
+        return this.getAiredEpisodeNumber().compareTo(episodeDetail.getAiredEpisodeNumber());
     }
 }

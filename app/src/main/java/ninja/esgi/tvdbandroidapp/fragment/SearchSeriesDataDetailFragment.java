@@ -4,20 +4,28 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.constraint.solver.widgets.Rectangle;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.activity.SearchSeriesActivity;
@@ -192,8 +200,7 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
 
     }
 
-    final private void loadEpisodes(List<EpisodeDetail> episodes) {
-        LinearLayout horizontalScrollContainer = (LinearLayout) view.findViewById(R.id.scrollViewSubContainer);
+    final private void loadEpisodes(LinearLayout episodesContainer, List<EpisodeDetail> episodes) {
         for (EpisodeDetail episode: episodes) {
             LinearLayout episodeLayout = new LinearLayout(view.getContext());
             episodeLayout.setMinimumWidth(275);
@@ -204,15 +211,9 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
 
             // ---- Episode number -----
             TextView text = new TextView(view.getContext());
-            String epNumber = getResources().getString(R.string.episode_season_prefix);
-            if (episode.getAiredSeason() != null && episode.getAiredSeason() > 0) {
-                epNumber += " " + episode.getAiredSeason();
-            } else {
-                epNumber += " " + getResources().getString(R.string.episode_unknown_season);
-            }
-            epNumber += " - " + getResources().getString(R.string.episode_ep_prefix);
-            if (episode.getAbsoluteNumber() != null && episode.getAbsoluteNumber() >= 0) {
-                epNumber += " " + episode.getAbsoluteNumber();
+            String epNumber = getResources().getString(R.string.episode_ep_prefix);
+            if (episode.getAiredEpisodeNumber() != null && episode.getAiredEpisodeNumber() >= 0) {
+                epNumber += " " + episode.getAiredEpisodeNumber();
             } else {
                 epNumber += " " + getResources().getString(R.string.episode_unknown_season);
             }
@@ -226,8 +227,45 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
             }
             episodeLayout.addView(text);
 
-            horizontalScrollContainer.addView(episodeLayout);
+            episodesContainer.addView(episodeLayout);
         }
+    }
+
+    final private void loadSeason(String seasonNumber, List<EpisodeDetail> episodes, LinearLayout seasonsContainer) {
+        LinearLayout seasonContainer = new LinearLayout(view.getContext());
+        seasonContainer.setOrientation(LinearLayout.VERTICAL);
+        seasonContainer.setPadding(5, 50, 5, 50);
+
+        TextView title = new TextView(view.getContext());
+        String seasonTitle = getResources().getString(R.string.episode_season_prefix);
+        if (Integer.parseInt(seasonNumber) > 0) {
+            seasonTitle += " " + seasonNumber;
+        } else {
+            seasonTitle += " " + getResources().getString(R.string.episode_unknown_season);
+        }
+        title.setText(seasonTitle);
+        title.setPadding(5, 15, 5, 15);
+        seasonContainer.addView(title);
+
+        LinearLayout separator = new LinearLayout(view.getContext());
+        separator.setMinimumHeight(5);
+        separator.setBackgroundColor(Color.BLACK);
+        separator.setPadding(50, 5, 50, 5);
+        seasonContainer.addView(separator);
+
+        HorizontalScrollView seasonWrapper = new HorizontalScrollView(view.getContext());
+        seasonWrapper.setPadding(50, 5, 50, 5);
+
+        LinearLayout episodesContainer = new LinearLayout(view.getContext());
+        episodesContainer.setMinimumWidth(episodes.size() * 100);
+        episodesContainer.setOrientation(LinearLayout.HORIZONTAL);
+        episodesContainer.setGravity(Gravity.CENTER);
+        episodesContainer.setMinimumHeight(120);
+
+        loadEpisodes(episodesContainer, episodes);
+        seasonWrapper.addView(episodesContainer);
+        seasonContainer.addView(seasonWrapper);
+        seasonsContainer.addView(seasonContainer);
     }
 
     final private void fetchSerie() {
@@ -311,8 +349,39 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
                 if (response.isSuccessful()) {
                     GetSeriesEpisodesResponse episodes = response.body();
                     List<EpisodeDetail> episodesList = episodes.getData();
-                    Collections.sort(episodesList);
-                    loadEpisodes(episodesList);
+                    HashMap<String, List<EpisodeDetail>> episodesBySeasons = new HashMap<>();
+                    for (EpisodeDetail episode: episodesList) {
+                        Long season = episode.getAiredSeason();
+                        String currentSeason = (season == null) ? "0" : season.toString();
+                        if (episodesBySeasons.containsKey(currentSeason)) {
+                            episodesBySeasons.get(currentSeason).add(episode);
+                        } else {
+                            List<EpisodeDetail> epsList = new ArrayList<EpisodeDetail>();
+                            epsList.add(episode);
+                            episodesBySeasons.put(currentSeason, epsList);
+                        }
+                    }
+                    // Sorting by season
+                    TreeMap<String, List<EpisodeDetail>> sorted = new TreeMap<>(episodesBySeasons);
+                    Set<Map.Entry<String, List<EpisodeDetail>>> mappings = sorted.entrySet();
+                    // Sorting by episodes
+                    for(Map.Entry<String, List<EpisodeDetail>> mapping : mappings){
+                        Collections.sort(mapping.getValue());
+                    }
+
+                    LinearLayout seasonsContainer = view.findViewById(R.id.seasons_container);
+                    TextView mainTitle = new TextView(view.getContext());
+                    mainTitle.setText(getResources().getString(R.string.episodes_container_title).toUpperCase());
+                    mainTitle.setPadding(0, 10, 0, 20);
+                    mainTitle.setBackgroundColor(Color.BLACK);
+                    seasonsContainer.addView(mainTitle);
+
+                    // Load each season separately
+                    for(Map.Entry<String, List<EpisodeDetail>> mapping : mappings){
+                        loadSeason(mapping.getKey(), mapping.getValue(), seasonsContainer);
+                    }
+
+
                 } else {
                     Log.d(LOG_TAG, "Failed to fetch serie's episodes");
                 }
