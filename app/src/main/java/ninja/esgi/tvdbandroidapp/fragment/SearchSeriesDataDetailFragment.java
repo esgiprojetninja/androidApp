@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import ninja.esgi.tvdbandroidapp.R;
+import ninja.esgi.tvdbandroidapp.activity.SearchSeriesActivity;
 import ninja.esgi.tvdbandroidapp.model.response.GetSerieDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.GetSerieResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
@@ -52,21 +53,20 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
         this._neeededResponses = 2;
         this.fetchData();
 
-        // @TODO make add favorite dependant on user's favorites
-
         // @TODO GET series/{id}/actors
         // @TODO GET series/{id}/episodes
-        // @TODO GET series/{id}/images
         // @TODO GET episodes/{id} on click ?
-        // @TODO GET episodes/{id} on click ?
-        // @TODO GET /user/favorites
         // @TODO GET /user/ratings
         // @TODO PUT /user/ratings/{itemType}/{itemId}/{itemRating}
         // @TODO DELETE /user/ratings/{itemType}/{itemId}
-        // @TODO PUT /user/favorites/{id}
-        // @TODO DELETE /user/favorites/{id}
-
         return view;
+    }
+
+    @Override
+    public void onStop() {
+        SearchSeriesActivity activity = (SearchSeriesActivity) getActivity();
+        activity.reloadSearchedSeriesList();
+        super.onStop();
     }
 
 
