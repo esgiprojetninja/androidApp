@@ -15,6 +15,7 @@ import java.util.HashMap;
 import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.model.Login;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 import retrofit2.Response;
@@ -127,6 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                             session.setSessionToken(token);
                             session.setUserName(login.getUsername());
                             session.setUserKey(login.getUserkey());
+                            fetchUserFavorites();
                             if (session.saveCredentials()) {
                                 Log.d(LOG_TAG, "Saved credentials in session !");
                             } else {
@@ -141,5 +143,30 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void fetchUserFavorites() {
+        this.showSpinner();
+        this.apiSm.getUserFavorites(this.session.getSessionToken(), new Subscriber<Response<UserFavoritesResponse>>() {
+            @Override
+            public void onCompleted() {
+                hideSpinner();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                hideSpinner();
+            }
+
+            @Override
+            public void onNext(Response<UserFavoritesResponse> response) {
+                if (response.isSuccessful()) {
+                    UserFavoritesResponse userResponse = response.body();
+                    session.setUserFavoritesShows(userResponse.getData().getFavorites());
+                } else {
+                    Log.d(LOG_TAG, "Failed to fetch user's favorites");
+                }
+            }
+        });
     }
 }

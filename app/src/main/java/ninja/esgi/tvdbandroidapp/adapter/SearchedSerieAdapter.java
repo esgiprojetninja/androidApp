@@ -13,6 +13,7 @@ import java.util.List;
 
 import ninja.esgi.tvdbandroidapp.activity.SearchSeriesActivity;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
+import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 
 
 public class SearchedSerieAdapter extends BaseAdapter {
@@ -21,10 +22,12 @@ public class SearchedSerieAdapter extends BaseAdapter {
     private SearchSeriesActivity ssActivity;
     private LayoutInflater inflater;
     public SearchSeriesDataResponse clickedTvShow;
+    private SessionStorage session;
 
-    public SearchedSerieAdapter(SearchSeriesActivity ssActivity, List<SearchSeriesDataResponse> seriesData) {
+    public SearchedSerieAdapter(SearchSeriesActivity ssActivity, List<SearchSeriesDataResponse> seriesData, SessionStorage session) {
         this.seriesData = seriesData;
         this.ssActivity = ssActivity;
+        this.session = session;
         this.inflater = (LayoutInflater) ssActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -56,7 +59,12 @@ public class SearchedSerieAdapter extends BaseAdapter {
             userViewHolder = (SearchSeriesDataViewHolder) convertView.getTag();
         }
         final SearchSeriesDataResponse ssdr = getItem(position);
-        userViewHolder.textView1.setText(ssdr.getSeriesName());
+        String title = ssdr.getSeriesName();
+        if ( session.isShowFavorite(ssdr.getId().toString())) {
+            title += " (favorite)";
+        }
+        userViewHolder.textView1.setText(title);
+
         if ( ssdr.getFirstAired() != null && ssdr.getFirstAired().trim().length() > 0 ) {
             userViewHolder.textView2.setText(ssdr.getFirstAired().split("-")[0]);
         } else {

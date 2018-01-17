@@ -8,7 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -39,6 +41,8 @@ public class SearchSeriesActivity extends AppCompatActivity {
     private boolean searchInProgress = false;
     private ListView languagesListView;
     private ListView seriesResultListView;
+    SearchedSerieAdapter searchedSeriesAdapter;
+    private SearchSeriesDataDetailFragment newFragment = new SearchSeriesDataDetailFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,10 @@ public class SearchSeriesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         this.checkSession();
+    }
+
+    final public void reloadSearchedSeriesList() {
+        searchedSeriesAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -89,8 +97,6 @@ public class SearchSeriesActivity extends AppCompatActivity {
     }
 
     final public void clickCallback(SearchSeriesDataResponse tvShow) {
-        Log.d(LOG_TAG, "oh yeah");
-        SearchSeriesDataDetailFragment newFragment = new SearchSeriesDataDetailFragment();
         newFragment.tvShow = tvShow;
 
         int position = languagesListView.getCheckedItemPosition();
@@ -110,16 +116,10 @@ public class SearchSeriesActivity extends AppCompatActivity {
     final private void loadSearchedSeriesResponse(List<SearchSeriesDataResponse> seriesData) {
         LinearLayout lay = (LinearLayout) findViewById(R.id.search_series_result_container_layout);
         lay.setMinimumHeight(800);
-        final SearchedSerieAdapter adapter = new SearchedSerieAdapter(this, seriesData);
+        searchedSeriesAdapter  = new SearchedSerieAdapter(this, seriesData, this.session);
 
         seriesResultListView = (ListView) findViewById(R.id.search_result_list);
-        seriesResultListView.setAdapter(adapter);
-//        seriesResultListView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Log.d(LOG_TAG, adapter.clickedTvShow.toString());
-//            }
-//        });
+        seriesResultListView.setAdapter(searchedSeriesAdapter);
     }
 
     final private void fetchLanguages() {
@@ -256,5 +256,9 @@ public class SearchSeriesActivity extends AppCompatActivity {
                 // @TODO display errors
             }
         }
+    }
+
+    public void handleFavorite(View view) {
+        newFragment.handleFavorite();
     }
 }

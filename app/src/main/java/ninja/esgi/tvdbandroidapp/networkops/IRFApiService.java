@@ -12,10 +12,12 @@ import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
 import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -38,6 +40,12 @@ public interface IRFApiService {
     Observable<Response<UserFavoritesResponse>> getUserFavorites(@Header("Authorization") String token);
     @GET("/user/ratings")
     Observable<Response<UserRatingsResponse>> getUserRatings(@Header("Authorization") String token);
+    @PUT("/user/favorites/{id}")
+    Observable<Response<UserFavoritesResponse>> putUserFavorite(@Header("Authorization") String token,
+                                                        @Path("id") String favoriteId);
+    @DELETE("/user/favorites/{id}")
+    Observable<Response<UserFavoritesResponse>> deleteUserFavorite(@Header("Authorization") String token,
+                                                           @Path("id") String favoriteId);
 
 
     // ### LANGUAGES Routes #############

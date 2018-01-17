@@ -84,10 +84,23 @@ public class ApiServiceManager implements INetworkService {
     }
 
     @Override
+    public void putUserFavorite(String token, String favoriteId, Subscriber<Response<UserFavoritesResponse>> subscriber) {
+        IRFApiService service = mRetrofit.create(IRFApiService.class);
+        addObservable(service.putUserFavorite(token, favoriteId), subscriber);
+    }
+
+    @Override
+    public void deleteUserFavorite(String token, String favoriteId, Subscriber<Response<UserFavoritesResponse>> subscriber) {
+        IRFApiService service = mRetrofit.create(IRFApiService.class);
+        addObservable(service.deleteUserFavorite(token, favoriteId), subscriber);
+    }
+
+    @Override
     public void getUserRatings(String token, Subscriber<Response<UserRatingsResponse>> subscriber) {
         IRFApiService service = mRetrofit.create(IRFApiService.class);
         addObservable(service.getUserRatings(token), subscriber);
     }
+
 
     @Override
     public void getLanguages(String token, Subscriber<Response<LanguagesResponse>> subscriber) {
