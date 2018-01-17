@@ -5,6 +5,7 @@ import java.util.HashMap;
 import ninja.esgi.tvdbandroidapp.model.Login;
 import ninja.esgi.tvdbandroidapp.model.Search;
 import ninja.esgi.tvdbandroidapp.model.response.GetSerieResponse;
+import ninja.esgi.tvdbandroidapp.model.response.GetSeriesEpisodesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
@@ -129,5 +130,16 @@ public class ApiServiceManager implements INetworkService {
         headersMap.put("Accept-Language", language);
 
         addObservable(service.getSerie(headersMap, seriesId.toString()), subscriber);
+    }
+
+    @Override
+    public void getSeriesEpisodes(String token, String language, Long seriesId, Subscriber<Response<GetSeriesEpisodesResponse>> subscriber) {
+        IRFApiService service = mRetrofit.create(IRFApiService.class);
+
+        HashMap<String, String> headersMap = new HashMap<String, String>();
+        headersMap.put("Authorization", token);
+        headersMap.put("Accept-Language", language);
+
+        addObservable(service.getSeriesEpisodes(headersMap, seriesId.toString()), subscriber);
     }
 }

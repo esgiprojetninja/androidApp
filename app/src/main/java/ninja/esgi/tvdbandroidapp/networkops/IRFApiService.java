@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import ninja.esgi.tvdbandroidapp.model.Login;
 import ninja.esgi.tvdbandroidapp.model.response.GetSerieResponse;
+import ninja.esgi.tvdbandroidapp.model.response.GetSeriesEpisodesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
@@ -62,5 +63,8 @@ public interface IRFApiService {
     // ### SERIES Routes ################
     @GET("/series/{id}")
     Observable<Response<GetSerieResponse>> getSerie(@HeaderMap HashMap<String, String> headers,
-                                                           @Path("id") String id);
+                                                    @Path("id") String id);
+    @GET("/series/{id}/episodes")
+    Observable<Response<GetSeriesEpisodesResponse>> getSeriesEpisodes(@HeaderMap HashMap<String, String> headers,
+                                                                     @Path("id") String seriesId);
 }

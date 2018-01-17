@@ -43,5 +43,8 @@
     <string name="series_status_prefix"><u>Status : </u></string>
     <string name="series_add_to_favorites">Add to favorite</string>
     <string name="series_rm_from_favorites">Remove from favorite</string>
+    <string name="episode_ep_prefix">Episode</string>
+    <string name="episode_season_prefix">Season</string>
+    <string name="episode_unknown_season">unknown</string>
 
 </resources>

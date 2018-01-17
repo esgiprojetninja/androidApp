@@ -27,6 +27,22 @@
                 android:orientation="vertical" >
                 <LinearLayout
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:orientation="vertical">
+                    <Button
+                        android:layout_width="match_parent"
+                        android:id="@+id/favoriteHandler"
+                        android:visibility="gone"
+                        android:clickable="true"
+                        android:onClick="handleFavorite"
+                        android:weightSum="1"
+                        android:text="@string/loading"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:weightSum="1"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -111,15 +127,24 @@
                     android:layout_weight="1"
                     android:padding="5dp"
                     android:orientation="vertical">
-                    <Button
+                    <HorizontalScrollView
                         android:layout_width="match_parent"
-                        android:id="@+id/favoriteHandler"
-                        android:visibility="gone"
-                        android:clickable="true"
-                        android:onClick="handleFavorite"
-                        android:weightSum="1"
-                        android:text="@string/loading"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="match_parent">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:orientation="horizontal"
+                            android:id="@+id/scrollViewSubContainer"
+                            android:layout_gravity="center"
+                            android:layout_height="match_parent">
+                            <LinearLayout
+                                android:layout_width="200dp"
+                                android:layout_height="75dp"
+                                android:layout_weight="1"
+                                android:padding="5dp"
+                                android:orientation="vertical">
+                            </LinearLayout>
+                        </LinearLayout>
+                    </HorizontalScrollView>
                 </LinearLayout>
             </LinearLayout>
 
