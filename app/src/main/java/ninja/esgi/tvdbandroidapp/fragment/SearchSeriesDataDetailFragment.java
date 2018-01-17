@@ -1,7 +1,6 @@
 package ninja.esgi.tvdbandroidapp.fragment;
 
 import android.app.Dialog;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import ninja.esgi.tvdbandroidapp.R;
@@ -197,12 +195,12 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
     final private void loadEpisodes(List<EpisodeDetail> episodes) {
         LinearLayout horizontalScrollContainer = (LinearLayout) view.findViewById(R.id.scrollViewSubContainer);
         for (EpisodeDetail episode: episodes) {
-            LinearLayout test = new LinearLayout(view.getContext());
-            test.setMinimumWidth(275);
-            test.setMinimumHeight(150);
-            test.setWeightSum(1);
-            test.setPadding(5, 5, 5, 5);
-            test.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout episodeLayout = new LinearLayout(view.getContext());
+            episodeLayout.setMinimumWidth(275);
+            episodeLayout.setMinimumHeight(150);
+            episodeLayout.setWeightSum(1);
+            episodeLayout.setPadding(5, 5, 5, 5);
+            episodeLayout.setOrientation(LinearLayout.VERTICAL);
 
             // ---- Episode number -----
             TextView text = new TextView(view.getContext());
@@ -223,9 +221,12 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             }
-            test.addView(text);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                text.setTextAppearance(Window.FEATURE_CUSTOM_TITLE);
+            }
+            episodeLayout.addView(text);
 
-            horizontalScrollContainer.addView(test);
+            horizontalScrollContainer.addView(episodeLayout);
         }
     }
 
@@ -302,6 +303,7 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
             @Override
             public void onError(Throwable e) {
                 hideSpinner();
+                Log.e(LOG_TAG, "niktamereJava", e);
             }
 
             @Override
@@ -309,12 +311,7 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
                 if (response.isSuccessful()) {
                     GetSeriesEpisodesResponse episodes = response.body();
                     List<EpisodeDetail> episodesList = episodes.getData();
-//                    Collections.sort(episodesList, new Comparator<EpisodeDetail>() {
-//                        @Override
-//                        public int compare(final EpisodeDetail ep1, final EpisodeDetail ep2) {
-//                            return ep1.getAbsoluteNumber().compareTo(ep2.getAbsoluteNumber());
-//                        }
-//                    });
+                    Collections.sort(episodesList);
                     loadEpisodes(episodesList);
                 } else {
                     Log.d(LOG_TAG, "Failed to fetch serie's episodes");

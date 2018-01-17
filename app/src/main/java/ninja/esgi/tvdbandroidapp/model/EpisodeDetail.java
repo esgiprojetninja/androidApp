@@ -1,9 +1,11 @@
 package ninja.esgi.tvdbandroidapp.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class EpisodeDetail {
+public class EpisodeDetail implements Comparable<EpisodeDetail> {
     @SerializedName("absoluteNumber")
     @Expose
     private Long absoluteNumber;
@@ -134,5 +136,17 @@ public class EpisodeDetail {
 
     public void setOverview(String overview) {
         this.overview = overview;
+    }
+
+    @Override
+    public int compareTo(@NonNull EpisodeDetail episodeDetail) {
+        if (this == null) return 1;
+        if (episodeDetail == null) return -1;
+        if (this.absoluteNumber == null)
+            return 1;
+        if (episodeDetail.getAbsoluteNumber() == null)
+            return -1;
+
+        return this.getAbsoluteNumber().compareTo(episodeDetail.getAbsoluteNumber());
     }
 }
