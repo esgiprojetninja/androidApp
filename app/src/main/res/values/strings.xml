@@ -27,7 +27,19 @@
     <string name="search_series_fragment_head_title">TV Show details</string>
     <string name="search_series_fragment_add_to_fav">Add to favorite</string>
     <string name="search_series_fragment_rm_from_fav">Remove from favorite</string>
+    <string name="series_detail_name_prefix">TV show - </string>
+    <string name="series_rating_participants_sufix">votes</string>
+    <string name="series_status_ended">Ended</string>
+    <string name="series_status_continuing">Continuing</string>
+    <string name="series_unknown_network">Unknown network</string>
+    <string name="series_no_overview">No overview for this tv show</string>
+    <string name="series_first_aired_prefix"><u>First aired : </u></string>
+    <string name="series_network_prefix"><u>Network : </u></string>
+    <string name="series_genres_prefix"><u>Genre : </u></string>
+    <string name="series_overview_prefix"><u>Overview : </u></string>
+    <string name="series_imdb_id_prefix"><u>Imdb ID : </u></string>
+    <string name="series_zap2it_id_prefix"><u>Zap2It ID : </u></string>
+    <string name="series_lastupdated_prefix"><u>Last updated : </u></string>
+    <string name="series_status_prefix"><u>Status : </u></string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

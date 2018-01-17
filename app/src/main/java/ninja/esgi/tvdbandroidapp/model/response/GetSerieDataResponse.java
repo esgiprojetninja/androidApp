@@ -1,9 +1,17 @@
 package ninja.esgi.tvdbandroidapp.model.response;
 
+
+import android.content.res.Resources;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import ninja.esgi.tvdbandroidapp.R;
 
 public class GetSerieDataResponse {
     @SerializedName("added")
@@ -257,5 +265,34 @@ public class GetSerieDataResponse {
 
     public void setZap2itId(String zap2itId) {
         this.zap2itId = zap2itId;
+    }
+
+
+    public String getRatingsOverview(Resources res) {
+        String overRatings = "";
+        if (this.siteRating != null) {
+            overRatings += this.siteRating.toString();
+            if (this.siteRatingCount != null) {
+                overRatings += ", " + this.siteRatingCount + " " + res.getString(R.string.series_rating_participants_sufix);
+            }
+        }
+        return overRatings;
+    }
+
+    public String getDisplayedDate() {
+        String overDate = "";
+        if (this.airsDayOfWeek != null) {
+            overDate += this.airsDayOfWeek + "/10";
+            if (this.airsTime != null && this.airsTime.length() > 0) {
+                overDate += ", " + this.airsTime;
+            }
+        }
+        return overDate;
+    }
+
+    public String getFormatedLastUpdated() {
+        Date date = new Date(this.lastUpdated * 1000);
+        Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+        return format.format(date);
     }
 }
