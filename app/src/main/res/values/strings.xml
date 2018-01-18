@@ -47,5 +47,6 @@
     <string name="episode_ep_prefix">Episode</string>
     <string name="episode_season_prefix">Season</string>
     <string name="episode_unknown_season">unknown</string>
+    <string name="episode_unnamed">--Unnamed Episode--</string>
 
 </resources>

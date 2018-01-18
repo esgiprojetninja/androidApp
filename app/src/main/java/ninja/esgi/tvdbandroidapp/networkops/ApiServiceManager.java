@@ -115,7 +115,7 @@ public class ApiServiceManager implements INetworkService {
 
         HashMap<String, String> headersMap = new HashMap<String, String>();
         headersMap.put("Authorization", token);
-        String language = searchParams.getLanguage().length() > 0 ? searchParams.getLanguage() : defaultLanguage;
+        String language = searchParams.getLanguage() != null && searchParams.getLanguage().length() > 0 ? searchParams.getLanguage() : defaultLanguage;
         headersMap.put("Accept-Language", language);
 
         addObservable(service.getSearchSeries(headersMap, searchParams.getQueriesMap()), subscriber);

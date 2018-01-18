@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.constraint.solver.widgets.Rectangle;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -203,29 +202,52 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
     final private void loadEpisodes(LinearLayout episodesContainer, List<EpisodeDetail> episodes) {
         for (EpisodeDetail episode: episodes) {
             LinearLayout episodeLayout = new LinearLayout(view.getContext());
-            episodeLayout.setMinimumWidth(275);
-            episodeLayout.setMinimumHeight(150);
+            episodeLayout.setMinimumHeight(75);
             episodeLayout.setWeightSum(1);
             episodeLayout.setPadding(5, 5, 5, 5);
             episodeLayout.setOrientation(LinearLayout.VERTICAL);
 
             // ---- Episode number -----
-            TextView text = new TextView(view.getContext());
+            TextView episodeNumber = new TextView(view.getContext());
             String epNumber = getResources().getString(R.string.episode_ep_prefix);
             if (episode.getAiredEpisodeNumber() != null && episode.getAiredEpisodeNumber() >= 0) {
                 epNumber += " " + episode.getAiredEpisodeNumber();
             } else {
                 epNumber += " " + getResources().getString(R.string.episode_unknown_season);
             }
-            text.setText(epNumber);
-            text.setWidth(view.getWidth());
+            episodeNumber.setText(epNumber);
+            episodeNumber.setWidth(view.getWidth());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                episodeNumber.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                text.setTextAppearance(Window.FEATURE_CUSTOM_TITLE);
+                episodeNumber.setTextAppearance(Window.FEATURE_CUSTOM_TITLE);
             }
-            episodeLayout.addView(text);
+            episodeNumber.setTextColor(Color.BLACK);
+            episodeNumber.setPadding(5, 5, 5, 0);
+            episodeLayout.addView(episodeNumber);
+
+            TextView episodeName = new TextView(view.getContext());
+            if (episode.getEpisodeName() != null && episode.getEpisodeName().length() > 2) {
+                episodeName.setText(episode.getEpisodeName());
+            } else {
+                episodeName.setText(getResources().getString(R.string.episode_unnamed));
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                episodeName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            }
+            episodeName.setPadding(5, 5, 5, 0);
+            episodeLayout.addView(episodeName);
+
+            if (episode.getFirstAired() != null && episode.getFirstAired().length() > 3) {
+                TextView episodeFirstDiffusion = new TextView(view.getContext());
+                episodeFirstDiffusion.setText(getResources().getString(R.string.series_first_aired_prefix) + " " + episode.getFirstAired());
+                episodeFirstDiffusion.setPadding(5, 5, 5, 5);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    episodeFirstDiffusion.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                }
+                episodeLayout.addView(episodeFirstDiffusion);
+            }
 
             episodesContainer.addView(episodeLayout);
         }
@@ -261,6 +283,7 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
         episodesContainer.setOrientation(LinearLayout.HORIZONTAL);
         episodesContainer.setGravity(Gravity.CENTER);
         episodesContainer.setMinimumHeight(120);
+        episodesContainer.setPadding(5, 5, 5, 50);
 
         loadEpisodes(episodesContainer, episodes);
         seasonWrapper.addView(episodesContainer);
@@ -373,7 +396,7 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
                     TextView mainTitle = new TextView(view.getContext());
                     mainTitle.setText(getResources().getString(R.string.episodes_container_title).toUpperCase());
                     mainTitle.setPadding(0, 10, 0, 20);
-                    mainTitle.setBackgroundColor(Color.BLACK);
+                    mainTitle.setTextColor(Color.BLACK);
                     seasonsContainer.addView(mainTitle);
 
                     // Load each season separately
