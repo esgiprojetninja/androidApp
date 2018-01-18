@@ -109,6 +109,12 @@ public class ApiServiceManager implements INetworkService {
         addObservable(service.putUserRating(token, itemType, itemId, itemRating), subscriber);
     }
 
+    @Override
+    public void deleteUserRating(String token, String itemType, String itemId, Subscriber<Response<UserRatingsResponse>> subscriber) {
+        IRFApiService service = mRetrofit.create(IRFApiService.class);
+        addObservable(service.deleteUserRating(token, itemType, itemId), subscriber);
+    }
+
 
     @Override
     public void getLanguages(String token, Subscriber<Response<LanguagesResponse>> subscriber) {

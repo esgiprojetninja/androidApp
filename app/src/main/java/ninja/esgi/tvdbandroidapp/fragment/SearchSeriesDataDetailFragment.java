@@ -78,16 +78,26 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
 
         // @TODO GET series/{id}/actors
         // @TODO GET episodes/{id} on click ?
-        // @TODO GET /user/ratings
-        // @TODO PUT /user/ratings/{itemType}/{itemId}/{itemRating}
-        // @TODO DELETE /user/ratings/{itemType}/{itemId}
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        resetRatingInput();
     }
 
     @Override
     public void onStop() {
         SearchSeriesActivity activity = (SearchSeriesActivity) getActivity();
         activity.reloadSearchedSeriesList();
+        EditText input = view.findViewById(R.id.user_rating_input);
+        input.clearFocus();
+        tvShow = null;
+        language = null;
+        _ongoingReqs = 0;
+        tvShowDetails = null;
+        view = null;
         super.onStop();
     }
 
@@ -97,6 +107,18 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dialog;
+    }
+
+    private final EditText resetRatingInput() {
+        EditText input = view.findViewById(R.id.user_rating_input);
+        input.clearFocus();
+        input.setText("");
+
+        UserRatingsDataResponse userRating = session.getRatingIfExists(SearchSeriesDataResponse.ITEM_TYPE, tvShow.getId().toString());
+        if (userRating != null) {
+            input.setText(userRating.getRating().toString());
+        }
+        return input;
     }
 
     final private void showSpinner() {
@@ -117,10 +139,20 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
 
     final private void adaptRatingsDisplay() {
         UserRatingsDataResponse userRating = session.getRatingIfExists(SearchSeriesDataResponse.ITEM_TYPE, tvShow.getId().toString());
+        Button cancelBtn = (Button) view.findViewById(R.id.remove_rating_btn);
         EditText input = view.findViewById(R.id.user_rating_input);
         input.setFilters(new InputFilter[]{ new InputFilterMinMax(Integer.toString(MIN_RATING), Integer.toString(MAX_RATING))});
         if (userRating != null) {
-            input.setText(userRating.getRating().toString());
+            cancelBtn.setVisibility(View.VISIBLE);
+            cancelBtn.setClickable(true);
+            cancelBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    deleteRating();
+                }
+            });
+        } else {
+            cancelBtn.setVisibility(View.GONE);
         }
 
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -335,7 +367,38 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
             @Override
             public void onNext(Response<UserRatingsResponse> res) {
                 UserRatingsResponse ratingsResponse = res.body();
-                session.setUserRatings(ratingsResponse.getData());
+                for(UserRatingsDataResponse userRating: ratingsResponse.getData()) {
+                    if (userRating.getRatingType().compareTo(SearchSeriesDataResponse.ITEM_TYPE) == 0
+                            && userRating.getRatingItemId().toString().compareTo(tvShow.getId().toString()) == 0) {
+                        session.addUserRating(userRating);
+                        break;
+                    }
+                }
+                resetRatingInput();
+                adaptRatingsDisplay();
+            }
+        });
+    }
+
+    final private void deleteRating() {
+        this.showSpinner();
+        this.apiSm.deleteUserRating(session.getSessionToken(), SearchSeriesDataResponse.ITEM_TYPE, tvShow.getId().toString(), new Subscriber<Response<UserRatingsResponse>>() {
+            @Override
+            public void onCompleted() {
+                hideSpinner();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                hideSpinner();
+                Log.e(LOG_TAG, "putRating error", e);
+            }
+
+            @Override
+            public void onNext(Response<UserRatingsResponse> res) {
+                UserRatingsResponse ratingsResponse = res.body();
+                session.removeUserRating(SearchSeriesDataResponse.ITEM_TYPE, tvShow.getId().toString());
+                resetRatingInput();
                 adaptRatingsDisplay();
             }
         });

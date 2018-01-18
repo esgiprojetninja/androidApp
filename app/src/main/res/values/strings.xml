@@ -50,5 +50,6 @@
     <string name="episode_unnamed">--Unnamed Episode--</string>
     <string name="user_grade_prefix">Your grade:</string>
     <string name="user_rating_input_prefix">Your rating : </string>
+    <string name="remove_rating">Cancel</string>
 
 </resources>

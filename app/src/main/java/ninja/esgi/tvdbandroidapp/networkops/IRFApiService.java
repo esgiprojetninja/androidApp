@@ -46,6 +46,10 @@ public interface IRFApiService {
                                                             @Path("itemType") String itemType,
                                                             @Path("itemId") String itemId,
                                                             @Path("itemRating") String itemRating);
+    @DELETE("/user/ratings/{itemType}/{itemId}")
+    Observable<Response<UserRatingsResponse>> deleteUserRating(@Header("Authorization") String token,
+                                                            @Path("itemType") String itemType,
+                                                            @Path("itemId") String itemId);
     @PUT("/user/favorites/{id}")
     Observable<Response<UserFavoritesResponse>> putUserFavorite(@Header("Authorization") String token,
                                                         @Path("id") String favoriteId);
