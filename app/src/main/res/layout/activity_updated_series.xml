@@ -29,9 +29,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-
-
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
                 <EditText
                     android:id="@+id/from_time"
                     android:layout_width="match_parent"
@@ -41,14 +41,12 @@
                     android:focusable="false"
                     android:focusableInTouchMode="false"
                     android:maxLines="1"
-                    android:onClick="startDatePicker"
+                    android:onClick="datePicker"
                     android:singleLine="true" />
-
-
+            </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <EditText
                     android:id="@+id/prompt_to_time"
                     android:layout_width="match_parent"
@@ -56,11 +54,10 @@
                     android:hint="@string/ending_date"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:inputType="date"
+                    android:inputType="text"
                     android:maxLines="1"
-                    android:onClick="endDatePicker"
+                    android:onClick="datePicker"
                     android:singleLine="true" />
-
             </android.support.design.widget.TextInputLayout>
 
             <Button

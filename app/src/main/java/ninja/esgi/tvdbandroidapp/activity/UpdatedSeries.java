@@ -3,36 +3,35 @@ package ninja.esgi.tvdbandroidapp.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.support.v4.app.DialogFragment;
+import android.app.DatePickerDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import ninja.esgi.tvdbandroidapp.R;
-import ninja.esgi.tvdbandroidapp.dialog.DatePickerFragment;
 
 
-public class UpdatedSeries extends AppCompatActivity{
+public class UpdatedSeries extends AppCompatActivity {
+    private static String LOG_TAG = "UpdatedSeries";
+    private static int ONE_DAY = 60*60*24*1*1000;
+    private static int SEVEN_DAYS = 60*60*24*7*1000;
+    final private Calendar myStartDate = Calendar.getInstance();
+    final private Calendar myEndDate = Calendar.getInstance();
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -61,28 +60,23 @@ public class UpdatedSeries extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_updated_series);
-        // Set up the login form.
+
+        myStartDate.add(Calendar.DAY_OF_MONTH, -7);
+        adaptTextFieldsToDates();
+
+        // Set up form
         mStartDateView = (EditText) findViewById(R.id.from_time);
         mStartDateView.setKeyListener(null);
 
         mEndDateView = (EditText) findViewById(R.id.prompt_to_time);
         mEndDateView.setKeyListener(null);
-        mEndDateView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptSearch();
-                    return true;
-                }
-                return false;
-            }
-        });
 
         Button mSearchButton = (Button) findViewById(R.id.search_updated_series_btn);
         mSearchButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptSearch();
+                // @TODO: trigger search
+                Log.d(LOG_TAG, "COUCOU");
             }
         });
 
@@ -90,66 +84,15 @@ public class UpdatedSeries extends AppCompatActivity{
         mProgressView = findViewById(R.id.login_progress);
     }
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-    private void attemptSearch() {
-        if (mSearchTask != null) {
-            return;
-        }
+    private void adaptTextFieldsToDates() {
+        String myFormat = "MM/dd/yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.FRENCH);
 
-        // Reset errors.
-        mStartDateView.setError(null);
-        mEndDateView.setError(null);
+        EditText mFromDate = findViewById(R.id.from_time);
+        mFromDate.setText(sdf.format(myStartDate.getTime()));
 
-        // Store values at the time of the login attempt.
-        String email = mStartDateView.getText().toString();
-        String password = mEndDateView.getText().toString();
-
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isEndDateValid(password)) {
-            mEndDateView.setError(getString(R.string.error_invalid_password));
-            focusView = mEndDateView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mStartDateView.setError(getString(R.string.error_field_required));
-            focusView = mStartDateView;
-            cancel = true;
-        } else if (!isStartDateValid(email)) {
-            mStartDateView.setError(getString(R.string.error_invalid_email));
-            focusView = mStartDateView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mSearchTask = new SearchUpdatedTVShowTask(email, password);
-            mSearchTask.execute((Void) null);
-        }
-    }
-
-    private boolean isStartDateValid(String date) {
-        //TODO: Replace this with your own logic
-        return date.contains("@");
-    }
-
-    private boolean isEndDateValid(String date) {
-        //TODO: Replace this with your own logic
-        return date.length() > 4;
+        EditText mToDate = findViewById(R.id.prompt_to_time);
+        mToDate.setText(sdf.format(myEndDate.getTime()));
     }
 
     /**
@@ -188,14 +131,49 @@ public class UpdatedSeries extends AppCompatActivity{
         }
     }
 
-    public void startDatePicker(View view) {
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "startingDatePicker");
-    }
+    public void datePicker(View view) {
+        final boolean isStartingDate = getResources().getResourceName(view.getId()).contains("from_time");
+        final Calendar receivedDate = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                receivedDate.set(Calendar.YEAR, year);
+                receivedDate.set(Calendar.MONTH, monthOfYear);
+                receivedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Date date = receivedDate.getTime();
+                if (isStartingDate) {
+                    if (date.getTime() > myEndDate.getTime().getTime()) {
+                        Date newEndDate = new Date(date.getTime() + ONE_DAY);
+                        myEndDate.set(Calendar.YEAR, newEndDate.getYear() + 1900);
+                        myEndDate.set(Calendar.MONTH, newEndDate.getMonth());
+                        myEndDate.set(Calendar.DAY_OF_MONTH, newEndDate.getDay());
+                    }
+                    myStartDate.set(Calendar.YEAR, date.getYear());
+                    myStartDate.set(Calendar.MONTH, date.getMonth());
+                    myStartDate.set(Calendar.DAY_OF_MONTH, date.getDay());
 
-    public void endDatePicker(View view) {
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "endingDatePicker");
+                } else {
+                    if (date.getTime() < myStartDate.getTime().getTime()) {
+                        Date newEndDate = new Date(date.getTime() - ONE_DAY);
+                        myStartDate.set(Calendar.YEAR, newEndDate.getYear() + 1900);
+                        myStartDate.set(Calendar.MONTH, newEndDate.getMonth());
+                        myStartDate.set(Calendar.DAY_OF_MONTH, newEndDate.getDay());
+                    }
+                    myEndDate.set(Calendar.YEAR, year);
+                    myEndDate.set(Calendar.MONTH, monthOfYear);
+                    myEndDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                }
+                adaptTextFieldsToDates();
+            }
+
+        };
+        final Calendar targetDate = (isStartingDate) ? myStartDate : myEndDate;
+        DatePickerDialog dialog = new DatePickerDialog(this, date, targetDate.get(Calendar.YEAR), targetDate.get(Calendar.MONTH), targetDate.get(Calendar.DAY_OF_MONTH));
+        if (isStartingDate)
+            dialog.getDatePicker().setMaxDate(new Date().getTime() - ONE_DAY);
+        else
+            dialog.getDatePicker().setMaxDate(new Date().getTime());
+        dialog.show();
     }
 
     /**
