@@ -23,7 +23,7 @@
         <activity android:name=".activity.UserInfoActivity" />
         <activity android:name=".activity.SearchSeriesActivity" />
         <activity
-            android:name=".activity.UpdatedSeries"
+            android:name=".activity.SearchUpdatedSeries"
             android:label="@string/title_activity_updated_series" />
     </application>
 

@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +23,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import ninja.esgi.tvdbandroidapp.R;
-import ninja.esgi.tvdbandroidapp.model.Search;
 import ninja.esgi.tvdbandroidapp.model.response.UpdatedSeriesResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
@@ -30,8 +30,8 @@ import retrofit2.Response;
 import rx.Subscriber;
 
 
-public class UpdatedSeries extends AppCompatActivity {
-    private static String LOG_TAG = "UpdatedSeries";
+public class SearchUpdatedSeries extends AppCompatActivity {
+    private static String LOG_TAG = "SearchUpdatedSeries";
     private static int ONE_DAY = 60*60*24*1*1000;
     private static int SEVEN_DAYS = 60*60*24*7*1000;
     final private Calendar myStartDate = Calendar.getInstance();
@@ -53,6 +53,8 @@ public class UpdatedSeries extends AppCompatActivity {
         session = SessionStorage.getInstance(getApplicationContext());
         apiSm = new ApiServiceManager();
 
+        loadToolbar();
+
         myStartDate.add(Calendar.DAY_OF_MONTH, -7);
         adaptTextFieldsToDates();
 
@@ -73,6 +75,14 @@ public class UpdatedSeries extends AppCompatActivity {
 
         mSearchFormView = findViewById(R.id.updated_series_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    private final void loadToolbar() {
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void adaptTextFieldsToDates() {
