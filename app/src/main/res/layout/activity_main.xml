@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_weight="4"
+            android:layout_weight="3"
             android:weightSum="1"
             >
             <Button
@@ -75,6 +75,15 @@
                 android:clickable="true"
                 android:onClick="searchSeriesActivity"
                 android:text="@string/search_series_link"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/updated_series"
+                android:weightSum="1"
+                android:textAlignment="center"
+                android:clickable="true"
+                android:onClick="updatedSeriesActivity"
+                android:text="@string/updated_series_btn_link"/>
         </LinearLayout>
     </LinearLayout>
 

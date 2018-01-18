@@ -20,9 +20,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".SearchSeries" />
         <activity android:name=".activity.UserInfoActivity" />
         <activity android:name=".activity.SearchSeriesActivity" />
+        <activity
+            android:name=".activity.UpdatedSeries"
+            android:label="@string/title_activity_updated_series" />
     </application>
 
 </manifest>
