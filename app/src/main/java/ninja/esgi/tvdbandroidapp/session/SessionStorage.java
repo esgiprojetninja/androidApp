@@ -8,6 +8,7 @@ import java.util.List;
 
 import ninja.esgi.tvdbandroidapp.BuildConfig;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesDataResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserRatingsDataResponse;
 
 public class SessionStorage {
     public final static Long TOKEN_DURATION = Long.valueOf(60*60*24);
@@ -28,6 +29,7 @@ public class SessionStorage {
     public Long sessionTokenTS = null;
     public List<LanguagesDataResponse> languages;
     public List<String> userFavoritesShows = null;
+    public List<UserRatingsDataResponse> userRatings = null;
 
     public Context context = null;
     public SharedPreferences preferences = null;
@@ -57,6 +59,7 @@ public class SessionStorage {
     public String getFavoritesDisplaymode() { return this.favoritesDisplaymode; }
     public List<LanguagesDataResponse> getLanguages() { return this.languages; }
     public List<String> getUserFavoritesShows() { return this.userFavoritesShows; }
+    public List<UserRatingsDataResponse> getUserRatings() { return this.userRatings; }
 
     public SessionStorage setSessionToken(String token) {
         ourInstance.sessionToken = "Bearer " + token;
@@ -88,6 +91,10 @@ public class SessionStorage {
     }
     public SessionStorage setUserFavoritesShows(List userFavoritesShows) {
         ourInstance.userFavoritesShows = userFavoritesShows;
+        return ourInstance;
+    }
+    public SessionStorage setUserRatings(List<UserRatingsDataResponse> userRatings) {
+        ourInstance.userRatings = userRatings;
         return ourInstance;
     }
 
@@ -144,5 +151,14 @@ public class SessionStorage {
             if (id.compareTo(showId) == 0) return true;
         }
         return false;
+    }
+
+    public UserRatingsDataResponse getRatingIfExists(String itemType, String itemId) {
+        if (getUserRatings() == null) return null;
+        for(UserRatingsDataResponse userRating: getUserRatings()) {
+            if (userRating.getRatingType().compareTo(itemType) == 0
+                    && userRating.getRatingItemId().toString().compareTo(itemId) == 0) return userRating;
+        }
+        return null;
     }
 }

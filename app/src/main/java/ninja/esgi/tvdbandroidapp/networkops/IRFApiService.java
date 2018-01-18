@@ -41,6 +41,11 @@ public interface IRFApiService {
     Observable<Response<UserFavoritesResponse>> getUserFavorites(@Header("Authorization") String token);
     @GET("/user/ratings")
     Observable<Response<UserRatingsResponse>> getUserRatings(@Header("Authorization") String token);
+    @PUT("/user/ratings/{itemType}/{itemId}/{itemRating}")
+    Observable<Response<UserRatingsResponse>> putUserRating(@Header("Authorization") String token,
+                                                            @Path("itemType") String itemType,
+                                                            @Path("itemId") String itemId,
+                                                            @Path("itemRating") String itemRating);
     @PUT("/user/favorites/{id}")
     Observable<Response<UserFavoritesResponse>> putUserFavorite(@Header("Authorization") String token,
                                                         @Path("id") String favoriteId);

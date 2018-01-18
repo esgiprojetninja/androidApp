@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class SearchSeriesDataResponse {
+    public static String ITEM_TYPE = "series";
+
     @SerializedName("aliases")
     @Expose
     private List<String> aliases;

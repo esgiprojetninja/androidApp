@@ -204,6 +204,7 @@ public class UserInfoActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     UserRatingsResponse userResponse = response.body();
                     loadRatingsData(userResponse.getData());
+                    session.setUserRatings(userResponse.getData());
                 } else {
                     Log.d(LOG_TAG, "Failed to fetch user's favorites");
                 }

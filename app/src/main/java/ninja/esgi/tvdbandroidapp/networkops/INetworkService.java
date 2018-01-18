@@ -28,6 +28,7 @@ public interface INetworkService {
     void getUser(String token, Subscriber<Response<UserResponse>> subscriber);
     void getUserFavorites(String token, Subscriber<Response<UserFavoritesResponse>> subscriber);
     void getUserRatings(String token, Subscriber<Response<UserRatingsResponse>> subscriber);
+    void putUserRating(String token, String itemType, String itemId, String itemRating, Subscriber<Response<UserRatingsResponse>> subscriber);
     void putUserFavorite(String token, String favoriteId, Subscriber<Response<UserFavoritesResponse>> subscriber);
     void deleteUserFavorite(String token, String favoriteId, Subscriber<Response<UserFavoritesResponse>> subscriber);
 
