@@ -25,6 +25,24 @@
         <activity
             android:name=".activity.SearchUpdatedSeries"
             android:label="@string/title_activity_updated_series" />
+        <activity
+            android:name=".activity.UpdatedSeriesListActivity"
+            android:label="@string/title_updatedseries_list"
+            android:parentActivityName=".activity.SearchUpdatedSeries"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ninja.esgi.tvdbandroidapp.activity.SearchUpdatedSeries" />
+        </activity>
+        <activity
+            android:name=".activity.UpdatedSeriesDetailActivity"
+            android:label="@string/title_updatedseries_detail"
+            android:parentActivityName=".activity.UpdatedSeriesListActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ninja.esgi.tvdbandroidapp.activity.UpdatedSeriesListActivity" />
+        </activity>
     </application>
 
 </manifest>

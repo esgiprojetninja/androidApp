@@ -58,6 +58,7 @@
     <string name="updated_series_description">Notice that the timelapse between starting and ending date will never result in showing more than the result of a seven days timelapse.</string>
     <string name="prompt_from_time">Starting Date</string>
     <string name="ending_date">Ending Date</string>
+    <string name="updated_series_no_data">No series found</string>
     <string name="search_updated_series_trigger_btn">Search</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
@@ -67,6 +68,8 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="title_activity_updated_series">Updates Tv Shows</string>
+    <string name="title_activity_updated_series">Updated Tv Shows</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="title_updatedseries_list">UpdatedSeriesList</string>
+    <string name="title_updatedseries_detail">UpdatedSeries Detail</string>
 </resources>

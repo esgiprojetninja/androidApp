@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Build;
@@ -15,19 +17,24 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import ninja.esgi.tvdbandroidapp.R;
+import ninja.esgi.tvdbandroidapp.model.UpdatedSerie;
 import ninja.esgi.tvdbandroidapp.model.response.UpdatedSeriesResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 import retrofit2.Response;
 import rx.Subscriber;
+
+import static android.widget.Toast.LENGTH_LONG;
 
 
 public class SearchUpdatedSeries extends AppCompatActivity {
@@ -44,6 +51,7 @@ public class SearchUpdatedSeries extends AppCompatActivity {
     private EditText mEndDateView;
     private View mProgressView;
     private View mSearchFormView;
+    private Context _context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +83,8 @@ public class SearchUpdatedSeries extends AppCompatActivity {
 
         mSearchFormView = findViewById(R.id.updated_series_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        _context = this;
     }
 
     private final void loadToolbar() {
@@ -96,7 +106,6 @@ public class SearchUpdatedSeries extends AppCompatActivity {
         mToDate.setText(sdf.format(myEndDate.getTime()));
     }
 
-
     final private void fetchSearchSeries() {
         showProgress(true);
         final String fromTime = Long.toString( myStartDate.getTime().getTime() / 1000);
@@ -117,13 +126,21 @@ public class SearchUpdatedSeries extends AppCompatActivity {
             public void onNext(Response<UpdatedSeriesResponse> response) {
                 if (response.isSuccessful()) {
                     UpdatedSeriesResponse res = response.body();
-                    Log.d(LOG_TAG, fromTime);
-                    Log.d(LOG_TAG, toTime);
+                     if (res.getData() != null && res.getData().size() > 0 && false)
+                         updatedSeriesListActivity(res.getData());
+                     else {
+                         Toast toast = Toast.makeText(_context, getString(R.string.updated_series_no_data), LENGTH_LONG);
+                         toast.show();
+                     }
                 } else {
                     Log.d(LOG_TAG, "uh oh, bad hat harry");
                 }
             }
         });
+    }
+
+    final private void updatedSeriesListActivity(List<UpdatedSerie> seriesBasicData) {
+        startActivity(new Intent(this, UpdatedSeriesListActivity.class));
     }
 
     /**
