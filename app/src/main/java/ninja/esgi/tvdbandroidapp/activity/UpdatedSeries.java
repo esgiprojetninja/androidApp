@@ -6,8 +6,6 @@ import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.support.v7.app.AppCompatActivity;
 
-import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +22,12 @@ import java.util.Date;
 import java.util.Locale;
 
 import ninja.esgi.tvdbandroidapp.R;
+import ninja.esgi.tvdbandroidapp.model.Search;
+import ninja.esgi.tvdbandroidapp.model.response.UpdatedSeriesResponse;
+import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
+import ninja.esgi.tvdbandroidapp.session.SessionStorage;
+import retrofit2.Response;
+import rx.Subscriber;
 
 
 public class UpdatedSeries extends AppCompatActivity {
@@ -32,23 +36,8 @@ public class UpdatedSeries extends AppCompatActivity {
     private static int SEVEN_DAYS = 60*60*24*7*1000;
     final private Calendar myStartDate = Calendar.getInstance();
     final private Calendar myEndDate = Calendar.getInstance();
-
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private SearchUpdatedTVShowTask mSearchTask = null;
+    private SessionStorage session = null;
+    private ApiServiceManager apiSm = null;
 
     // UI references.
     private EditText mStartDateView;
@@ -60,6 +49,9 @@ public class UpdatedSeries extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_updated_series);
+
+        session = SessionStorage.getInstance(getApplicationContext());
+        apiSm = new ApiServiceManager();
 
         myStartDate.add(Calendar.DAY_OF_MONTH, -7);
         adaptTextFieldsToDates();
@@ -75,8 +67,7 @@ public class UpdatedSeries extends AppCompatActivity {
         mSearchButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                // @TODO: trigger search
-                Log.d(LOG_TAG, "COUCOU");
+                fetchSearchSeries();
             }
         });
 
@@ -93,6 +84,36 @@ public class UpdatedSeries extends AppCompatActivity {
 
         EditText mToDate = findViewById(R.id.prompt_to_time);
         mToDate.setText(sdf.format(myEndDate.getTime()));
+    }
+
+
+    final private void fetchSearchSeries() {
+        showProgress(true);
+        final String fromTime = Long.toString( myStartDate.getTime().getTime() / 1000);
+        final String toTime = Long.toString( myEndDate.getTime().getTime() / 1000);
+        this.apiSm.getUpdatedSeries(this.session.getSessionToken(), this.session.getUserLanguage(), fromTime, toTime, new Subscriber<Response<UpdatedSeriesResponse>>() {
+            @Override
+            public void onCompleted() {
+                showProgress(false);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e(LOG_TAG, "error", e);
+                showProgress(false);
+            }
+
+            @Override
+            public void onNext(Response<UpdatedSeriesResponse> response) {
+                if (response.isSuccessful()) {
+                    UpdatedSeriesResponse res = response.body();
+                    Log.d(LOG_TAG, fromTime);
+                    Log.d(LOG_TAG, toTime);
+                } else {
+                    Log.d(LOG_TAG, "uh oh, bad hat harry");
+                }
+            }
+        });
     }
 
     /**
@@ -174,63 +195,6 @@ public class UpdatedSeries extends AppCompatActivity {
         else
             dialog.getDatePicker().setMaxDate(new Date().getTime());
         dialog.show();
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class SearchUpdatedTVShowTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        SearchUpdatedTVShowTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mSearchTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mEndDateView.setError(getString(R.string.error_incorrect_password));
-                mEndDateView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mSearchTask = null;
-            showProgress(false);
-        }
     }
 }
 

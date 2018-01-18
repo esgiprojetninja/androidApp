@@ -9,6 +9,7 @@ import ninja.esgi.tvdbandroidapp.model.response.GetSeriesEpisodesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UpdatedSeriesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
@@ -154,5 +155,16 @@ public class ApiServiceManager implements INetworkService {
         headersMap.put("Accept-Language", language);
 
         addObservable(service.getSeriesEpisodes(headersMap, seriesId.toString()), subscriber);
+    }
+
+    @Override
+    public void getUpdatedSeries(String token, String language, String fromTime, String toTime, Subscriber<Response<UpdatedSeriesResponse>> subscriber) {
+        IRFApiService service = mRetrofit.create(IRFApiService.class);
+
+        HashMap<String, String> headersMap = new HashMap<String, String>();
+        headersMap.put("Authorization", token);
+        headersMap.put("Accept-Language", language);
+
+        addObservable(service.getUpdatedSeries(headersMap, fromTime, toTime), subscriber);
     }
 }

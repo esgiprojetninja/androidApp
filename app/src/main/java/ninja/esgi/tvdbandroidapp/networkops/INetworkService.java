@@ -9,6 +9,7 @@ import ninja.esgi.tvdbandroidapp.model.response.GetSeriesEpisodesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UpdatedSeriesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
@@ -45,5 +46,9 @@ public interface INetworkService {
     // ########## SERIES ROUTES ##################################################
     void getSerie(String token, String language, Long id, Subscriber<Response<GetSerieResponse>> subscriber);
     void getSeriesEpisodes(String token, String language, Long id, Subscriber<Response<GetSeriesEpisodesResponse>> subscriber);
+
+
+    // ########## UPDATED SERIES ROUTES ##########################################
+    void getUpdatedSeries(String token, String language, String fromTime, String toTime, Subscriber<Response<UpdatedSeriesResponse>> subscriber);
 
 }

@@ -15,7 +15,9 @@ import java.util.HashMap;
 import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.model.Login;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserDetailResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 import retrofit2.Response;
@@ -105,6 +107,33 @@ public class LoginActivity extends AppCompatActivity {
         this.dispatchLogin(login);
     }
 
+    final private void fetchUserInfo() {
+        this.showSpinner();
+        this.apiSm.getUser(this.session.getSessionToken(), new Subscriber<Response<UserResponse>>() {
+            @Override
+            public void onCompleted() {
+                hideSpinner();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                hideSpinner();
+            }
+
+            @Override
+            public void onNext(Response<UserResponse> response) {
+                if (response.isSuccessful()) {
+                    UserResponse userResponse = response.body();
+                    UserDetailResponse userDetailResponse = userResponse.getData();
+                    session.setUserLanguage(userDetailResponse.getLanguage())
+                            .setFavoriteDisplayMode(userDetailResponse.getFavoritesDisplaymode());
+                } else {
+                    Log.d(LOG_TAG, "uh oh, bad hat harry");
+                }
+            }
+        });
+    }
+
     private void dispatchLogin(final Login login){
         this.showSpinner();
         this.apiSm.login(login, new Subscriber<Response<LoginResponse>>() {
@@ -128,6 +157,7 @@ public class LoginActivity extends AppCompatActivity {
                             session.setSessionToken(token);
                             session.setUserName(login.getUsername());
                             session.setUserKey(login.getUserkey());
+                            fetchUserInfo();
                             fetchUserFavorites();
                             if (session.saveCredentials()) {
                                 Log.d(LOG_TAG, "Saved credentials in session !");
