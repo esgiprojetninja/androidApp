@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -38,8 +39,10 @@ import ninja.esgi.tvdbandroidapp.model.response.GetSeriesEpisodesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserRatingsDataResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
+import ninja.esgi.tvdbandroidapp.utils.InputFilterMinMax;
 import retrofit2.Response;
 import rx.Subscriber;
 
@@ -48,6 +51,8 @@ import rx.Subscriber;
  */
 public class SearchSeriesDataDetailFragment extends DialogFragment {
     final private static String LOG_TAG = "SearchSeriesDDFragment";
+    final private static int MIN_RATING = 1;
+    final private static int MAX_RATING = 10;
     private int _neeededResponses = 2;
     public SearchSeriesDataResponse tvShow;
     public String language;
@@ -113,18 +118,19 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
     final private void adaptRatingsDisplay() {
         UserRatingsDataResponse userRating = session.getRatingIfExists(SearchSeriesDataResponse.ITEM_TYPE, tvShow.getId().toString());
         EditText input = view.findViewById(R.id.user_rating_input);
+        input.setFilters(new InputFilter[]{ new InputFilterMinMax(Integer.toString(MIN_RATING), Integer.toString(MAX_RATING))});
         if (userRating != null) {
             input.setText(userRating.getRating().toString());
         }
+
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    Log.d(LOG_TAG, "coucou");
-                    handled = true;
+                String newRating = String.valueOf(v.getText());
+                if ( Long.valueOf(newRating) >= MIN_RATING && Long.valueOf(newRating) <= MAX_RATING ) {
+                    putRating(newRating);
                 }
-                return handled;
+                return false;
             }
         });
 
@@ -310,6 +316,29 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
         seasonWrapper.addView(episodesContainer);
         seasonContainer.addView(seasonWrapper);
         seasonsContainer.addView(seasonContainer);
+    }
+
+    final private void putRating(String rating) {
+        this.showSpinner();
+        this.apiSm.putUserRating(session.getSessionToken(), SearchSeriesDataResponse.ITEM_TYPE, tvShow.getId().toString(), rating, new Subscriber<Response<UserRatingsResponse>>() {
+            @Override
+            public void onCompleted() {
+                hideSpinner();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                hideSpinner();
+                Log.e(LOG_TAG, "putRating error", e);
+            }
+
+            @Override
+            public void onNext(Response<UserRatingsResponse> res) {
+                UserRatingsResponse ratingsResponse = res.body();
+                session.setUserRatings(ratingsResponse.getData());
+                adaptRatingsDisplay();
+            }
+        });
     }
 
     final private void fetchSerie() {
