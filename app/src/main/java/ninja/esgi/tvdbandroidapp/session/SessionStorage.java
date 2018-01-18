@@ -97,6 +97,24 @@ public class SessionStorage {
         ourInstance.userRatings = userRatings;
         return ourInstance;
     }
+    public SessionStorage addUserRating(UserRatingsDataResponse userRating) {
+        ourInstance.userRatings.add(userRating);
+        return ourInstance;
+    }
+    public SessionStorage removeUserRating(String itemType, String itemId) {
+        if (getUserRatings() == null) return this;
+        UserRatingsDataResponse toRemove = null;
+        for(UserRatingsDataResponse userRating: getUserRatings()) {
+            if (userRating.getRatingType().compareTo(itemType) == 0
+                    && userRating.getRatingItemId().toString().compareTo(itemId) == 0) {
+                toRemove = userRating;
+                break;
+            }
+        }
+        if (toRemove != null)
+            getUserRatings().remove(toRemove);
+        return this;
+    }
 
     public boolean saveCredentials() {
         SharedPreferences.Editor editor = this.preferences.edit();
