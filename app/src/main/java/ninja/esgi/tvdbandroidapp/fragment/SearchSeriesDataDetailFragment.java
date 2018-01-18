@@ -8,11 +8,14 @@ import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -34,6 +37,7 @@ import ninja.esgi.tvdbandroidapp.model.response.GetSerieResponse;
 import ninja.esgi.tvdbandroidapp.model.response.GetSeriesEpisodesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserRatingsDataResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 import retrofit2.Response;
@@ -65,6 +69,7 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
         this.apiSm = new ApiServiceManager();
         this._neeededResponses = 2;
         this.fetchData();
+        this.adaptRatingsDisplay();
 
         // @TODO GET series/{id}/actors
         // @TODO GET episodes/{id} on click ?
@@ -103,6 +108,27 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
         if (popupSpinner.getVisibility() != View.GONE && _ongoingReqs == 0) {
             popupSpinner.setVisibility(View.GONE);
         }
+    }
+
+    final private void adaptRatingsDisplay() {
+        UserRatingsDataResponse userRating = session.getRatingIfExists(SearchSeriesDataResponse.ITEM_TYPE, tvShow.getId().toString());
+        EditText input = view.findViewById(R.id.user_rating_input);
+        if (userRating != null) {
+            input.setText(userRating.getRating().toString());
+        }
+        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    Log.d(LOG_TAG, "coucou");
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
+
     }
 
     final private void adaptFavoriteBtnDisplay() {

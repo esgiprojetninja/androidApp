@@ -54,13 +54,34 @@
                         style="@style/Base.DialogWindowTitle.AppCompat"
                         android:text="@string/loading" />
 
-                    <TextView
-                        android:id="@+id/series_rating"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAlignment="textEnd"
-                        android:text="@string/loading"
-                        android:gravity="end" />
+                        android:orientation="horizontal"
+                        android:gravity="end">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/user_rating_input_prefix" />
+                        <EditText
+                            android:id="@+id/user_rating_input"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberSigned"
+                            android:gravity="end" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=" /10" />
+                        <TextView
+                            android:id="@+id/series_rating"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/loading"
+                            android:gravity="end" />
+                    </LinearLayout>
+
 
                     <TextView
                         android:id="@+id/series_status"

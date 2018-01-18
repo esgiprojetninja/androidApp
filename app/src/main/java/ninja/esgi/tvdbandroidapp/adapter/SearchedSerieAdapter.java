@@ -2,7 +2,6 @@ package ninja.esgi.tvdbandroidapp.adapter;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +10,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.activity.SearchSeriesActivity;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserRatingsDataResponse;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 
 
@@ -58,22 +59,30 @@ public class SearchedSerieAdapter extends BaseAdapter {
         } else {
             userViewHolder = (SearchSeriesDataViewHolder) convertView.getTag();
         }
-        final SearchSeriesDataResponse ssdr = getItem(position);
-        String title = ssdr.getSeriesName();
-        if ( session.isShowFavorite(ssdr.getId().toString())) {
+        final SearchSeriesDataResponse searchSerieData = getItem(position);
+        String title = searchSerieData.getSeriesName();
+        if ( session.isShowFavorite(searchSerieData.getId().toString())) {
             title += " (favorite)";
         }
         userViewHolder.textView1.setText(title);
 
-        if ( ssdr.getFirstAired() != null && ssdr.getFirstAired().trim().length() > 0 ) {
-            userViewHolder.textView2.setText(ssdr.getFirstAired().split("-")[0]);
+        String subtitle;
+        if ( searchSerieData.getFirstAired() != null && searchSerieData.getFirstAired().trim().length() > 0 ) {
+            subtitle = searchSerieData.getFirstAired().split("-")[0];
         } else {
-            userViewHolder.textView2.setText("Unknown release date");
+           subtitle = "Unknown release date";
         }
+
+        final UserRatingsDataResponse userRatingsDataResponse = session.getRatingIfExists(SearchSeriesDataResponse.ITEM_TYPE, searchSerieData.getId().toString());
+        if (userRatingsDataResponse != null) {
+            subtitle += "     -     (" + ssActivity.getResources().getString(R.string.user_grade_prefix) + userRatingsDataResponse.getRating() + ")";
+        }
+        userViewHolder.textView2.setText(subtitle);
+
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ssActivity.clickCallback(ssdr);
+                ssActivity.clickCallback(searchSerieData);
             }
         });
         return convertView;

@@ -24,6 +24,7 @@ import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserDetailResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
@@ -56,6 +57,7 @@ public class SearchSeriesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         this.checkSession();
+        this.fetchUserRatings();
     }
 
     final public void reloadSearchedSeriesList() {
@@ -194,6 +196,27 @@ public class SearchSeriesActivity extends AppCompatActivity {
                     loadSearchedSeriesResponse(resData);
                 } else {
                     Log.d(LOG_TAG, "uh oh, bad hat harry");
+                }
+            }
+        });
+    }
+
+    private void fetchUserRatings() {
+        this.showSpinner();
+        this.apiSm.getUserRatings(this.session.getSessionToken(), new Subscriber<Response<UserRatingsResponse>>() {
+            @Override
+            public void onCompleted() { hideSpinner(); }
+
+            @Override
+            public void onError(Throwable e) { hideSpinner(); }
+
+            @Override
+            public void onNext(Response<UserRatingsResponse> response) {
+                if (response.isSuccessful()) {
+                    UserRatingsResponse userResponse = response.body();
+                    session.setUserRatings(userResponse.getData());
+                } else {
+                    Log.d(LOG_TAG, "Failed to fetch user's favorites");
                 }
             }
         });

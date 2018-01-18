@@ -48,5 +48,7 @@
     <string name="episode_season_prefix">Season</string>
     <string name="episode_unknown_season">unknown</string>
     <string name="episode_unnamed">--Unnamed Episode--</string>
+    <string name="user_grade_prefix">Your grade:</string>
+    <string name="user_rating_input_prefix">Your rating : </string>
 
 </resources>
