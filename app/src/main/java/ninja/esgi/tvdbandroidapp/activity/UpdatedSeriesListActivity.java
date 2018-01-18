@@ -21,6 +21,9 @@ import ninja.esgi.tvdbandroidapp.R;
 
 import ninja.esgi.tvdbandroidapp.activity.dummy.DummyContent;
 import ninja.esgi.tvdbandroidapp.fragment.UpdatedSeriesDetailFragment;
+import ninja.esgi.tvdbandroidapp.model.UpdatedSerie;
+import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
+import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 
 import java.util.List;
 
@@ -39,11 +42,14 @@ public class UpdatedSeriesListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    private SessionStorage session = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_updatedseries_list);
+
+        session = SessionStorage.getInstance(getApplicationContext());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -94,14 +100,15 @@ public class UpdatedSeriesListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, DummyContent.ITEMS, mTwoPane));
+        UpdatedSerie[] data = session.getBasicSearchUpdatedData().toArray(new UpdatedSerie[session.getBasicSearchUpdatedData().size()]);
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, data, mTwoPane));
     }
 
     public static class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final UpdatedSeriesListActivity mParentActivity;
-        private final List<DummyContent.DummyItem> mValues;
+        private final UpdatedSerie[] mValues;
         private final boolean mTwoPane;
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
@@ -126,7 +133,7 @@ public class UpdatedSeriesListActivity extends AppCompatActivity {
         };
 
         SimpleItemRecyclerViewAdapter(UpdatedSeriesListActivity parent,
-                                      List<DummyContent.DummyItem> items,
+                                      UpdatedSerie[] items,
                                       boolean twoPane) {
             mValues = items;
             mParentActivity = parent;
@@ -142,16 +149,23 @@ public class UpdatedSeriesListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mIdView.setText(mValues[position].getId().toString());
+            holder.mContentView.setText(mValues[position].getLastUpdated().toString());
 
-            holder.itemView.setTag(mValues.get(position));
+            holder.itemView.setTag(mValues[position].getId());
             holder.itemView.setOnClickListener(mOnClickListener);
+
+
+//            holder.mIdView.setText(mValues.get(position).id);
+//            holder.mContentView.setText(mValues.get(position).content);
+//
+//            holder.itemView.setTag(mValues.get(position));
+//            holder.itemView.setOnClickListener(mOnClickListener);
         }
 
         @Override
         public int getItemCount() {
-            return mValues.size();
+            return mValues.length;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {

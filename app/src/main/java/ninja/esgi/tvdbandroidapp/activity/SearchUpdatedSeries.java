@@ -23,11 +23,9 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import ninja.esgi.tvdbandroidapp.R;
-import ninja.esgi.tvdbandroidapp.model.UpdatedSerie;
 import ninja.esgi.tvdbandroidapp.model.response.UpdatedSeriesResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
@@ -126,11 +124,11 @@ public class SearchUpdatedSeries extends AppCompatActivity {
             public void onNext(Response<UpdatedSeriesResponse> response) {
                 if (response.isSuccessful()) {
                     UpdatedSeriesResponse res = response.body();
-                     if (res.getData() != null && res.getData().size() > 0 && false)
-                         updatedSeriesListActivity(res.getData());
-                     else {
-                         Toast toast = Toast.makeText(_context, getString(R.string.updated_series_no_data), LENGTH_LONG);
-                         toast.show();
+                     if (res.getData() != null && res.getData().size() > 0) {
+                         session.setBasicUpdatedSearch(res.getData());
+                         updatedSeriesListActivity();
+                     } else {
+                         Toast.makeText(_context, getString(R.string.updated_series_no_data), LENGTH_LONG).show();
                      }
                 } else {
                     Log.d(LOG_TAG, "uh oh, bad hat harry");
@@ -139,7 +137,7 @@ public class SearchUpdatedSeries extends AppCompatActivity {
         });
     }
 
-    final private void updatedSeriesListActivity(List<UpdatedSerie> seriesBasicData) {
+    final private void updatedSeriesListActivity() {
         startActivity(new Intent(this, UpdatedSeriesListActivity.class));
     }
 
