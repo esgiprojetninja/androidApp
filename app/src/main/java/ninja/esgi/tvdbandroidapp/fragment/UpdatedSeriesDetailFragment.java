@@ -71,7 +71,13 @@ public class UpdatedSeriesDetailFragment extends Fragment {
 
     private void loadData() {
         if (appBarLayout != null) {
-            appBarLayout.setTitle(serieData.getSeriesName());
+            String name = serieData.getSeriesName();
+            if ( name == null || name.length() <= 3)
+                name = getString(R.string.unknown_tvshow_name);
+
+            if (serieData.getFirstAired() != null && serieData.getFirstAired().contains("-"))
+                name += " - " + serieData.getFirstAired().split("-")[0];
+            appBarLayout.setTitle(name);
         }
     }
 
@@ -105,12 +111,12 @@ public class UpdatedSeriesDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.updatedseries_detail, container, false);
-
-        // Show the dummy content as text in a TextView.
-        if (serieData != null) {
-            ((TextView) rootView.findViewById(R.id.updatedseries_detail)).setText(serieData.getSeriesName());
-        }
-
+//
+//        // Show the dummy content as text in a TextView.
+////        if (serieData != null) {
+////            ((TextView) rootView.findViewById(R.id.updatedseries_detail)).setText(serieData.getSeriesName());
+////        }
+//
         return rootView;
     }
 }

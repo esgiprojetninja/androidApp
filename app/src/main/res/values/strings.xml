@@ -69,6 +69,7 @@
         completions."
     </string>
     <string name="title_activity_updated_series">Updated Tv Shows</string>
+    <string name="unknown_tvshow_name">Unknown TvShow name</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_updatedseries_list">UpdatedSeriesList</string>
     <string name="title_updatedseries_detail">UpdatedSeries Detail</string>
