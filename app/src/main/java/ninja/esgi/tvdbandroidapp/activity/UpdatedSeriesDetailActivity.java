@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.fragment.UpdatedSeriesDetailFragment;
@@ -28,15 +29,6 @@ public class UpdatedSeriesDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_updatedseries_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -66,6 +58,7 @@ public class UpdatedSeriesDetailActivity extends AppCompatActivity {
                     .commit();
         }
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -1,13 +1,17 @@
 package ninja.esgi.tvdbandroidapp.fragment;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import ninja.esgi.tvdbandroidapp.R;
@@ -17,6 +21,7 @@ import ninja.esgi.tvdbandroidapp.activity.dummy.DummyContent;
 import ninja.esgi.tvdbandroidapp.model.UpdatedSerie;
 import ninja.esgi.tvdbandroidapp.model.response.GetSerieDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.GetSerieResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 import retrofit2.Response;
@@ -42,6 +47,7 @@ public class UpdatedSeriesDetailFragment extends Fragment {
     private ApiServiceManager apiSm = null;
     private String tvShowID = null;
     private CollapsingToolbarLayout appBarLayout = null;
+    Activity activity;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -62,22 +68,51 @@ public class UpdatedSeriesDetailFragment extends Fragment {
 
             tvShowID = getArguments().getString(ARG_ITEM_ID);
 
-            Activity activity = this.getActivity();
+            activity = this.getActivity();
             appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+            adaptFavFABDisplay();
             fetchSeries();
         }
     }
 
+    final private void adaptFavFABDisplay() {
+
+        final FloatingActionButton fab = (FloatingActionButton) activity.findViewById(R.id.fab);
+        if (session.isShowFavorite(tvShowID)) {
+            fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_full_star));
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    deleteFavorite();
+                }
+            });
+        } else {
+            fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_star_border));
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    putFavorite();
+                }
+            });
+        }
+
+    }
+
     private void loadData() {
         if (appBarLayout != null) {
-            String name = serieData.getSeriesName();
-            if ( name == null || name.length() <= 3)
-                name = getString(R.string.unknown_tvshow_name);
-
-            if (serieData.getFirstAired() != null && serieData.getFirstAired().contains("-"))
-                name += " - " + serieData.getFirstAired().split("-")[0];
-            appBarLayout.setTitle(name);
+            loadTitle();
         }
+    }
+
+
+    private void loadTitle() {
+        String name = serieData.getSeriesName();
+        if ( name == null || name.length() <= 3)
+            name = getString(R.string.unknown_tvshow_name);
+
+        if (serieData.getFirstAired() != null && serieData.getFirstAired().contains("-"))
+            name += " - " + serieData.getFirstAired().split("-")[0];
+        appBarLayout.setTitle(name);
     }
 
     private void fetchSeries() {
@@ -101,6 +136,57 @@ public class UpdatedSeriesDetailFragment extends Fragment {
                     Log.d(LOG_TAG, "yeah mofo");
                 } else {
                     Log.d(LOG_TAG, "uh oh, bad hat harry");
+                }
+            }
+        });
+    }
+
+
+    final private void putFavorite() {
+        this.apiSm.putUserFavorite(this.session.getSessionToken(), tvShowID, new Subscriber<Response<UserFavoritesResponse>>() {
+            @Override
+            public void onCompleted() {
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onNext(Response<UserFavoritesResponse> response) {
+                if (response.isSuccessful()) {
+                    UserFavoritesResponse userResponse = response.body();
+                    session.setUserFavoritesShows(userResponse.getData().getFavorites());
+                    adaptFavFABDisplay();
+                    Snackbar.make(getView(), "Show added to your favorites", Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null).show();
+                } else {
+                    Log.d(LOG_TAG, "Failed to update user's favorites");
+                }
+            }
+        });
+    }
+
+    final private void deleteFavorite() {
+        this.apiSm.deleteUserFavorite(this.session.getSessionToken(), tvShowID, new Subscriber<Response<UserFavoritesResponse>>() {
+            @Override
+            public void onCompleted() {
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onNext(Response<UserFavoritesResponse> response) {
+                if (response.isSuccessful()) {
+                    UserFavoritesResponse userResponse = response.body();
+                    session.setUserFavoritesShows(userResponse.getData().getFavorites());
+                    adaptFavFABDisplay();
+                    Snackbar.make(getView(), "Show removed from your favorites", Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null).show();
+                } else {
+                    Log.d(LOG_TAG, "Failed to update user's favorites");
                 }
             }
         });
