@@ -64,6 +64,14 @@ public class SessionStorage {
     public List<UserRatingsDataResponse> getUserRatings() { return this.userRatings; }
     public List<UpdatedSerie> getBasicSearchUpdatedData() { return this.seriesBasicSearchData; }
 
+    public UpdatedSerie getUpdateSerie(Long showID) {
+        for (UpdatedSerie serie: getBasicSearchUpdatedData()) {
+            if (showID.compareTo(serie.getId()) == 0)
+                return serie;
+        }
+        return null;
+    }
+
     public SessionStorage setSessionToken(String token) {
         ourInstance.sessionToken = "Bearer " + token;
         return ourInstance;

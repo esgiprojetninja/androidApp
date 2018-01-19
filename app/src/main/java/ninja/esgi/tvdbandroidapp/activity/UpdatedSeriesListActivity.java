@@ -113,10 +113,10 @@ public class UpdatedSeriesListActivity extends AppCompatActivity {
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DummyContent.DummyItem item = (DummyContent.DummyItem) view.getTag();
+                UpdatedSerie item = (UpdatedSerie) view.getTag();
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
-                    arguments.putString(UpdatedSeriesDetailFragment.ARG_ITEM_ID, item.id);
+                    arguments.putString(UpdatedSeriesDetailFragment.ARG_ITEM_ID, item.getId().toString());
                     UpdatedSeriesDetailFragment fragment = new UpdatedSeriesDetailFragment();
                     fragment.setArguments(arguments);
                     mParentActivity.getSupportFragmentManager().beginTransaction()
@@ -125,7 +125,7 @@ public class UpdatedSeriesListActivity extends AppCompatActivity {
                 } else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, UpdatedSeriesDetailActivity.class);
-                    intent.putExtra(UpdatedSeriesDetailFragment.ARG_ITEM_ID, item.id);
+                    intent.putExtra(UpdatedSeriesDetailFragment.ARG_ITEM_ID, item.getId().toString());
 
                     context.startActivity(intent);
                 }
@@ -152,7 +152,7 @@ public class UpdatedSeriesListActivity extends AppCompatActivity {
             holder.mIdView.setText(mValues[position].getId().toString());
             holder.mContentView.setText(mValues[position].getLastUpdated().toString());
 
-            holder.itemView.setTag(mValues[position].getId());
+            holder.itemView.setTag(mValues[position]);
             holder.itemView.setOnClickListener(mOnClickListener);
 
 
