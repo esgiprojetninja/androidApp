@@ -63,14 +63,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="1dp"
             android:orientation="vertical">
 
-            <RatingBar
-                android:id="@+id/ratingBar"
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1">
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    style="MyRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left|start"
+                    android:layout_weight="1"
+                    android:numStars="5"
+                    android:stepSize="0.5"
+                    android:textAlignment="textStart" />
+            </RelativeLayout>
+
+            <!--@TODO : in code :  RatingBar.setRating(int) -->
 
             <Switch
                 android:id="@+id/switch1"

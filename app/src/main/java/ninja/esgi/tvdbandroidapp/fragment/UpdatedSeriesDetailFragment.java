@@ -60,7 +60,6 @@ public class UpdatedSeriesDetailFragment extends Fragment {
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
 
-
             tvShowID = getArguments().getString(ARG_ITEM_ID);
 
             Activity activity = this.getActivity();
@@ -111,12 +110,7 @@ public class UpdatedSeriesDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.updatedseries_detail, container, false);
-//
-//        // Show the dummy content as text in a TextView.
-////        if (serieData != null) {
-////            ((TextView) rootView.findViewById(R.id.updatedseries_detail)).setText(serieData.getSeriesName());
-////        }
-//
+
         return rootView;
     }
 }
