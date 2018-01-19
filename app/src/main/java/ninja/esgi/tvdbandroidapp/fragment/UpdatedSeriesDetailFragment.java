@@ -2,16 +2,20 @@ package ninja.esgi.tvdbandroidapp.fragment;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.media.Rating;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RatingBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import ninja.esgi.tvdbandroidapp.R;
@@ -101,9 +105,51 @@ public class UpdatedSeriesDetailFragment extends Fragment {
     private void loadData() {
         if (appBarLayout != null) {
             loadTitle();
+            loadAverageRating();
+            loadRatingDetails();
+            loadStatus();
+            loadGenres();
         }
     }
 
+    final private void loadGenres() {
+        TextView mText = (TextView) activity.findViewById(R.id.series_genres);
+        mText.setText(serieData.getRatingsOverview(getResources()));
+        if (serieData.getGenre() != null && serieData.getGenre().size() > 0)
+            mText.setText(getResources().getString(R.string.series_genres_prefix) + " " + TextUtils.join(", ", serieData.getGenre()));
+        else
+            mText.setText(getString(R.string.series_no_genre));
+
+    }
+
+    final private void loadStatus() {
+        if(serieData.getStatus() == null) return;
+        Switch mSwitch = (Switch) activity.findViewById(R.id.switch1);
+
+        switch (serieData.getStatus().toLowerCase()) {
+            case "continuing": {
+                mSwitch.setChecked(true);
+                mSwitch.setText(getString(R.string.series_status_prefix) + " " + getString(R.string.series_status_continuing));
+                break;
+            }
+            default: {
+                mSwitch.setChecked(false);
+                mSwitch.setText(getString(R.string.series_status_prefix) + " " + getString(R.string.series_status_ended));
+                break;
+            }
+        }
+    }
+
+    private void loadAverageRating() {
+        if (serieData.getSiteRating() == null) return;
+        RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
+        mRating.setRating(Float.parseFloat(String.valueOf(serieData.getSiteRating())));
+    }
+
+    final private void loadRatingDetails() {
+        TextView mText = (TextView) activity.findViewById(R.id.rating_details);
+        mText.setText(serieData.getRatingsOverview(getResources()));
+    }
 
     private void loadTitle() {
         String name = serieData.getSeriesName();
@@ -140,7 +186,6 @@ public class UpdatedSeriesDetailFragment extends Fragment {
             }
         });
     }
-
 
     final private void putFavorite() {
         this.apiSm.putUserFavorite(this.session.getSessionToken(), tvShowID, new Subscriber<Response<UserFavoritesResponse>>() {

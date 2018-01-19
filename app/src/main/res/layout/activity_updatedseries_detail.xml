@@ -83,6 +83,14 @@
                     android:textAlignment="textStart" />
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/rating_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
             <!--@TODO : in code :  RatingBar.setRating(int) -->
 
             <Switch
@@ -93,9 +101,30 @@
                 android:layout_weight="1"
                 android:checked="false"
                 android:focusable="false"
+                android:editable="false"
                 android:focusableInTouchMode="false"
                 android:paddingRight="100dp"
                 android:text="Status       " />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Genre"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+                <TextView
+                    android:id="@+id/series_genres"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
