@@ -8,6 +8,7 @@ import ninja.esgi.tvdbandroidapp.model.response.GetSeriesEpisodesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
 import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UpdatedSeriesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserResponse;
@@ -23,6 +24,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import rx.Observable;
+import rx.Subscriber;
 
 public interface IRFApiService {
 
@@ -76,4 +78,12 @@ public interface IRFApiService {
     @GET("/series/{id}/episodes")
     Observable<Response<GetSeriesEpisodesResponse>> getSeriesEpisodes(@HeaderMap HashMap<String, String> headers,
                                                                      @Path("id") String seriesId);
+
+
+
+    // ### UPDATED SERIES Routes ################
+    @GET("/updated/query")
+    Observable<Response<UpdatedSeriesResponse>> getUpdatedSeries(@HeaderMap HashMap<String, String> headers,
+                                                                 @Query("fromTime") String fromTime,
+                                                                 @Query("toTime") String toTime);
 }

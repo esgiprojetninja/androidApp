@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import ninja.esgi.tvdbandroidapp.R;
-import ninja.esgi.tvdbandroidapp.activity.LoginActivity;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 
@@ -53,12 +52,15 @@ public class MainActivity extends AppCompatActivity {
     private void adaptContent() {
         Button userInfoLinkBtn = (Button) findViewById(R.id.user_info_link_btn);
         Button searchSeriesLinkBtn = (Button) findViewById(R.id.search_show_link_btn);
+        Button updatedSeriesLinkBtn = (Button) findViewById(R.id.updated_series);
         if (this.session.isUserConnected()) {
             userInfoLinkBtn.setVisibility(View.VISIBLE);
             searchSeriesLinkBtn.setVisibility(View.VISIBLE);
+            updatedSeriesLinkBtn.setVisibility(View.VISIBLE);
         } else {
             userInfoLinkBtn.setVisibility(View.GONE);
             searchSeriesLinkBtn.setVisibility(View.GONE);
+            updatedSeriesLinkBtn.setVisibility(View.GONE);
         }
     }
 
@@ -78,5 +80,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void searchSeriesActivity(View view) {
         startActivity(new Intent(this, SearchSeriesActivity.class));
+    }
+
+    public void updatedSeriesActivity(View view) {
+        startActivity(new Intent(this, SearchUpdatedSeries.class));
     }
 }

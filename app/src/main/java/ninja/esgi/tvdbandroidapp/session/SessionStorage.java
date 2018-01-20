@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import java.util.List;
 
 import ninja.esgi.tvdbandroidapp.BuildConfig;
+import ninja.esgi.tvdbandroidapp.model.UpdatedSerie;
 import ninja.esgi.tvdbandroidapp.model.response.LanguagesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserRatingsDataResponse;
 
@@ -30,6 +31,7 @@ public class SessionStorage {
     public List<LanguagesDataResponse> languages;
     public List<String> userFavoritesShows = null;
     public List<UserRatingsDataResponse> userRatings = null;
+    private List<UpdatedSerie> seriesBasicSearchData = null;
 
     public Context context = null;
     public SharedPreferences preferences = null;
@@ -60,6 +62,15 @@ public class SessionStorage {
     public List<LanguagesDataResponse> getLanguages() { return this.languages; }
     public List<String> getUserFavoritesShows() { return this.userFavoritesShows; }
     public List<UserRatingsDataResponse> getUserRatings() { return this.userRatings; }
+    public List<UpdatedSerie> getBasicSearchUpdatedData() { return this.seriesBasicSearchData; }
+
+    public UpdatedSerie getUpdateSerie(Long showID) {
+        for (UpdatedSerie serie: getBasicSearchUpdatedData()) {
+            if (showID.compareTo(serie.getId()) == 0)
+                return serie;
+        }
+        return null;
+    }
 
     public SessionStorage setSessionToken(String token) {
         ourInstance.sessionToken = "Bearer " + token;
@@ -91,6 +102,10 @@ public class SessionStorage {
     }
     public SessionStorage setUserFavoritesShows(List userFavoritesShows) {
         ourInstance.userFavoritesShows = userFavoritesShows;
+        return ourInstance;
+    }
+    public SessionStorage setBasicUpdatedSearch(List<UpdatedSerie> data) {
+        ourInstance.seriesBasicSearchData = data;
         return ourInstance;
     }
     public SessionStorage setUserRatings(List<UserRatingsDataResponse> userRatings) {
