@@ -53,6 +53,7 @@ public class UpdatedSeriesDetailFragment extends Fragment {
     private String tvShowID = null;
     private CollapsingToolbarLayout appBarLayout = null;
     Activity activity;
+    private boolean _userChangingRating = true;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -62,31 +63,52 @@ public class UpdatedSeriesDetailFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
+        mRating.setOnRatingBarChangeListener(null);
+    }
+
+    final private void watchRatingBar() {
+        RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
+        mRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+                if (_userChangingRating) {
+                    if (v == 0)
+                        deleteRating();
+                    else {
+                        int intV = (int) (v * 2);
+                        putRating(String.valueOf(intV));
+                    }
+                }
+                Log.d(LOG_TAG, "coucou");
+            }
+        });
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         session = SessionStorage.getInstance(getContext());
         apiSm = new ApiServiceManager();
         if (getArguments().containsKey(ARG_ITEM_ID)) {
+            activity = this.getActivity();
+            watchRatingBar();
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
 
             tvShowID = getArguments().getString(ARG_ITEM_ID);
 
-            activity = this.getActivity();
+
             appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             adaptFavFABDisplay();
             fetchUserRatings();
             fetchSeries();
             blockRatingBar(true);
 
-            RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
-            mRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-                @Override
-                public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                    Log.d(LOG_TAG, "coucou");
-                }
-            });
+
         }
     }
 
@@ -165,21 +187,24 @@ public class UpdatedSeriesDetailFragment extends Fragment {
     }
 
     final private void loadUserRatingStars(UserRatingsDataResponse userRating) {
+        _userChangingRating = false;
         RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
-        mRating.setRating(userRating.getRating());
+        mRating.setRating(userRating.getRating() / 2);
 
         LayerDrawable stars = (LayerDrawable) mRating.getProgressDrawable();
         stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+        _userChangingRating = true;
     }
 
     private void loadAverageRating() {
+        _userChangingRating = false;
         if (serieData.getSiteRating() == null) return;
         RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
-        mRating.setRating(Float.parseFloat(String.valueOf(serieData.getSiteRating())));
-
+        mRating.setRating(Float.parseFloat(String.valueOf(serieData.getSiteRating() / 2)));
 
         LayerDrawable stars = (LayerDrawable) mRating.getProgressDrawable();
         stars.getDrawable(2).setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
+        _userChangingRating = true;
     }
 
     final private void loadRatingDetails() {
@@ -298,6 +323,31 @@ public class UpdatedSeriesDetailFragment extends Fragment {
                             break;
                         }
                     }
+                    fetchSeries();
+                }
+            }
+        });
+    }
+
+    final private void deleteRating() {
+        blockRatingBar(true);
+        this.apiSm.deleteUserRating(session.getSessionToken(), SearchSeriesDataResponse.ITEM_TYPE, tvShowID, new Subscriber<Response<UserRatingsResponse>>() {
+            @Override
+            public void onCompleted() {
+                blockRatingBar(false);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                blockRatingBar(false);
+                Log.e(LOG_TAG, "putRating error", e);
+            }
+
+            @Override
+            public void onNext(Response<UserRatingsResponse> res) {
+                if (res.isSuccessful()) {
+                    session.removeUserRating(SearchSeriesDataResponse.ITEM_TYPE, tvShowID);
+                    loadAverageRating();
                 }
             }
         });

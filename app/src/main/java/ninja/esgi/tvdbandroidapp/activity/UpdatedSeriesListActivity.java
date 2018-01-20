@@ -100,7 +100,12 @@ public class UpdatedSeriesListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        UpdatedSerie[] data = session.getBasicSearchUpdatedData().toArray(new UpdatedSerie[session.getBasicSearchUpdatedData().size()]);
+        UpdatedSerie[] data;
+        if (session.getBasicSearchUpdatedData() != null) {
+            data = session.getBasicSearchUpdatedData().toArray(new UpdatedSerie[session.getBasicSearchUpdatedData().size()]);
+        } else {
+            data = new UpdatedSerie[0];
+        }
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, data, mTwoPane));
     }
 
