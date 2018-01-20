@@ -3,6 +3,8 @@ package ninja.esgi.tvdbandroidapp.fragment;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
@@ -14,9 +16,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckedTextView;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.activity.UpdatedSeriesDetailActivity;
@@ -45,7 +52,6 @@ public class UpdatedSeriesDetailFragment extends Fragment {
      */
     public static final String ARG_ITEM_ID = "item_id";
     public static final String LOG_TAG = "SeriesDetailFragment";
-
 
     private GetSerieDataResponse serieData;
     private SessionStorage session = null;
@@ -156,20 +162,26 @@ public class UpdatedSeriesDetailFragment extends Fragment {
 
     final private void loadStatus() {
         if(serieData.getStatus() == null) return;
-        Switch mSwitch = (Switch) activity.findViewById(R.id.switch1);
+        ImageView mImg = (ImageView) activity.findViewById(R.id.status_img);
+        mImg.setBackgroundColor(Color.LTGRAY);
+
+        Drawable sampleDrawable;
+
+        TextView mText = (TextView) activity.findViewById(R.id.status_txt);
 
         switch (serieData.getStatus().toLowerCase()) {
             case "continuing": {
-                mSwitch.setChecked(true);
-                mSwitch.setText(getString(R.string.series_status_prefix) + " " + getString(R.string.series_status_continuing));
+                sampleDrawable = getResources().getDrawable(R.drawable.ic_check_sign);
+                mText.setText(getString(R.string.series_status_prefix) + " " + getString(R.string.series_status_continuing));
                 break;
             }
             default: {
-                mSwitch.setChecked(false);
-                mSwitch.setText(getString(R.string.series_status_prefix) + " " + getString(R.string.series_status_ended));
+                sampleDrawable = getResources().getDrawable(R.drawable.ic_stop_sign);
+                mText.setText(getString(R.string.series_status_prefix) + " " + getString(R.string.series_status_ended));
                 break;
             }
         }
+        mImg.setImageDrawable(sampleDrawable);
     }
 
     final private void blockRatingBar(boolean block) {
@@ -189,22 +201,37 @@ public class UpdatedSeriesDetailFragment extends Fragment {
     final private void loadUserRatingStars(UserRatingsDataResponse userRating) {
         _userChangingRating = false;
         RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
-        mRating.setRating(userRating.getRating() / 2);
+        float rating = Float.parseFloat(String.valueOf(userRating.getRating())) / 2;
+        mRating.setRating(rating);
 
         LayerDrawable stars = (LayerDrawable) mRating.getProgressDrawable();
         stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
         _userChangingRating = true;
+
+        Button ratingBtn = (Button) activity.findViewById(R.id.rating_cancel_btn);
+        ratingBtn.setVisibility(View.VISIBLE);
+        ratingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteRating();
+            }
+        });
     }
 
     private void loadAverageRating() {
         _userChangingRating = false;
         if (serieData.getSiteRating() == null) return;
         RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
-        mRating.setRating(Float.parseFloat(String.valueOf(serieData.getSiteRating() / 2)));
+        float rating = Float.parseFloat(String.valueOf(serieData.getSiteRating())) / 2;
+        mRating.setRating(rating);
 
         LayerDrawable stars = (LayerDrawable) mRating.getProgressDrawable();
-        stars.getDrawable(2).setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(2).setColorFilter(Color.DKGRAY, PorterDuff.Mode.SRC_ATOP);
         _userChangingRating = true;
+
+        Button ratingBtn = (Button) activity.findViewById(R.id.rating_cancel_btn);
+        ratingBtn.setVisibility(View.GONE);
+        ratingBtn.setOnClickListener(null);
     }
 
     final private void loadRatingDetails() {

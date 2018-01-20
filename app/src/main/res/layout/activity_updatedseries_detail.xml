@@ -83,28 +83,50 @@
                     android:textAlignment="textStart" />
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/rating_details"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="TextView"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                android:orientation="horizontal">
 
-            <!--@TODO : in code :  RatingBar.setRating(int) -->
+                <TextView
+                    android:id="@+id/rating_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="rating details"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
-            <Switch
-                android:id="@+id/switch1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical|end"
+                <Button
+                    android:id="@+id/rating_cancel_btn"
+                    style="@android:style/Widget.Button.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    android:text="@string/remove_rating" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:checked="false"
-                android:focusable="false"
-                android:editable="false"
-                android:focusableInTouchMode="false"
-                android:paddingRight="100dp"
-                android:text="Status       " />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/status_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/series_status_prefix" />
+
+                <ImageView
+                    android:id="@+id/status_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/ic_check_sign" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
