@@ -17,6 +17,10 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import ninja.esgi.tvdbandroidapp.R;
 
 import ninja.esgi.tvdbandroidapp.fragment.UpdatedSeriesDetailFragment;
@@ -140,8 +144,12 @@ public class UpdatedSeriesListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mIdView.setText(mValues[position].getId().toString());
-            holder.mContentView.setText(mValues[position].getLastUpdated().toString());
+            holder.mIdView.setText("ID: "+ mValues[position].getId().toString());
+
+            SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM dd, yyyy, HH:mm", Locale.ENGLISH);
+            Date d = new Date(mValues[position].getLastUpdated() * 1000);
+
+            holder.mContentView.setText(formatter.format(d));
 
             holder.itemView.setTag(mValues[position]);
             holder.itemView.setOnClickListener(mOnClickListener);
