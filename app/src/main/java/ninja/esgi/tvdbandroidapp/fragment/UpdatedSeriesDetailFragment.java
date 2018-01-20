@@ -2,10 +2,13 @@ package ninja.esgi.tvdbandroidapp.fragment;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.os.Build;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,11 +19,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -70,6 +76,7 @@ public class UpdatedSeriesDetailFragment extends Fragment {
     private String tvShowID = null;
     private CollapsingToolbarLayout appBarLayout = null;
     Activity activity;
+    Set<Map.Entry<Integer, List<EpisodeDetail>>> mappings = null;
     private boolean _userChangingRating = true;
 
     /**
@@ -123,9 +130,8 @@ public class UpdatedSeriesDetailFragment extends Fragment {
             adaptFavFABDisplay();
             fetchUserRatings();
             fetchSeries();
+            fetchSeriesEpisodes();
             blockRatingBar(true);
-
-
         }
     }
 
@@ -158,6 +164,16 @@ public class UpdatedSeriesDetailFragment extends Fragment {
             loadRatingDetails();
             loadStatus();
             loadGenres();
+            loadOverview();
+        }
+    }
+
+    final private void loadOverview() {
+        TextView mText = (TextView) activity.findViewById(R.id.overview_text);
+        if (serieData.getOverview() != null && serieData.getOverview().length() > 4 ) {
+            mText.setText(serieData.getOverview());
+        }  else {
+            mText.setText(getResources().getString(R.string.series_no_overview));
         }
     }
 
@@ -229,7 +245,7 @@ public class UpdatedSeriesDetailFragment extends Fragment {
         });
     }
 
-    private void loadAverageRating() {
+    final private void loadAverageRating() {
         _userChangingRating = false;
         if (serieData.getSiteRating() == null) return;
         RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
@@ -250,7 +266,7 @@ public class UpdatedSeriesDetailFragment extends Fragment {
         mText.setText(serieData.getRatingsOverview(getResources()));
     }
 
-    private void loadTitle() {
+    final private void loadTitle() {
         String name = serieData.getSeriesName();
         if ( name == null || name.length() <= 3)
             name = getString(R.string.unknown_tvshow_name);
@@ -258,6 +274,112 @@ public class UpdatedSeriesDetailFragment extends Fragment {
         if (serieData.getFirstAired() != null && serieData.getFirstAired().contains("-"))
             name += " - " + serieData.getFirstAired().split("-")[0];
         appBarLayout.setTitle(name);
+    }
+
+    final private LinearLayout generateHZScrolledLayout() {
+        LinearLayout sLayout = new LinearLayout(getContext());
+        sLayout.setOrientation(LinearLayout.VERTICAL);
+        sLayout.setClickable(true);
+        sLayout.setMinimumWidth(600);
+        sLayout.setMinimumHeight(300);
+        sLayout.setPadding(5, 5,5, 5);
+        ShapeDrawable rectShapeDrawable = new ShapeDrawable();
+        Paint paint = rectShapeDrawable.getPaint();
+        paint.setColor(Color.GRAY);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
+        sLayout.setBackgroundDrawable(rectShapeDrawable);
+        return sLayout;
+    }
+
+    final private void loadSeasonEpisodes(List<EpisodeDetail> episodes) {
+        LinearLayout mListContainer = (LinearLayout) activity.findViewById(R.id.episode_choice);
+        mListContainer.removeAllViews();
+        for(EpisodeDetail episode: episodes) {
+            LinearLayout sLayout = generateHZScrolledLayout();
+
+            TextView mTitle = new TextView(getContext());
+            mTitle.setGravity(TextView.TEXT_ALIGNMENT_GRAVITY);
+            String epNumber = getResources().getString(R.string.episode_ep_prefix);
+            if (episode.getAiredEpisodeNumber() != null && episode.getAiredEpisodeNumber() >= 0) {
+                epNumber += " " + episode.getAiredEpisodeNumber();
+            } else {
+                epNumber += " " + getResources().getString(R.string.episode_unknown_season);
+            }
+            mTitle.setText(epNumber);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                mTitle.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+            }
+            mTitle.setTextColor(Color.BLACK);
+            mTitle.setPadding(5, 5, 5, 10);
+
+            TextView episodeName = new TextView(getContext());
+            if (episode.getEpisodeName() != null && episode.getEpisodeName().length() > 2 && episode.getEpisodeName().compareTo( episode.getAiredEpisodeNumber().toString()) != 0) {
+                episodeName.setText(episode.getEpisodeName());
+            } else {
+                episodeName.setText(getResources().getString(R.string.episode_unnamed));
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                episodeName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            }
+            episodeName.setPadding(5, 15, 5, 10);
+
+
+            sLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // @TODO load new episode activity
+                }
+            });
+
+            sLayout.addView(mTitle);
+            sLayout.addView(episodeName);
+            mListContainer.addView(sLayout);
+        }
+    }
+
+
+    final private void loadSeasonChoices() {
+        LinearLayout mListContainer = (LinearLayout) activity.findViewById(R.id.season_choice);
+        mListContainer.removeAllViews();
+
+        for(final Map.Entry<Integer, List<EpisodeDetail>> mapping : mappings){
+            LinearLayout sLayout = generateHZScrolledLayout();
+
+            TextView mTitle = new TextView(getContext());
+            mTitle.setGravity(TextView.TEXT_ALIGNMENT_GRAVITY);
+            mTitle.setText("Season " +mapping.getKey());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                mTitle.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+            }
+            mTitle.setTextColor(Color.BLACK);
+            mTitle.setPadding(5, 5, 5, 10);
+
+
+
+            TextView mEpNumber = new TextView(getContext());
+            mEpNumber.setGravity(TextView.TEXT_ALIGNMENT_GRAVITY);
+            if (mapping.getValue() != null && mapping.getValue().size() > 0 ) {
+                mEpNumber.setText( mapping.getValue().size() + " episodes");
+            } else {
+                mEpNumber.setText( "No available episodes");
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                mTitle.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+            }
+            mEpNumber.setPadding(5, 15, 5, 10);
+
+            sLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loadSeasonEpisodes(mapping.getValue());
+                }
+            });
+
+            sLayout.addView(mTitle);
+            sLayout.addView(mEpNumber);
+            mListContainer.addView(sLayout);
+        }
     }
 
     private void fetchSeries() {
@@ -441,7 +563,7 @@ public class UpdatedSeriesDetailFragment extends Fragment {
                 if (response.isSuccessful()) {
                     GetSeriesEpisodesResponse episodes = response.body();
                     List<EpisodeDetail> episodesList = episodes.getData();
-                    HashMap<String, List<EpisodeDetail>> episodesBySeasons = new HashMap<>();
+                    HashMap<Integer, List<EpisodeDetail>> episodesBySeasons = new HashMap<>();
                     for (EpisodeDetail episode: episodesList) {
                         Long season = episode.getAiredSeason();
                         String currentSeason = (season == null) ? "0" : season.toString();
@@ -450,32 +572,18 @@ public class UpdatedSeriesDetailFragment extends Fragment {
                         } else {
                             List<EpisodeDetail> epsList = new ArrayList<EpisodeDetail>();
                             epsList.add(episode);
-                            episodesBySeasons.put(currentSeason, epsList);
+                            episodesBySeasons.put(Integer.parseInt(currentSeason), epsList);
                         }
                     }
                     // Sorting by season
-                    TreeMap<String, List<EpisodeDetail>> sorted = new TreeMap<>(episodesBySeasons);
-                    Set<Map.Entry<String, List<EpisodeDetail>>> mappings = sorted.entrySet();
+                    TreeMap<Integer, List<EpisodeDetail>> sorted = new TreeMap<>(episodesBySeasons);
+                    mappings = sorted.entrySet();
                     // Sorting by episodes
-                    for(Map.Entry<String, List<EpisodeDetail>> mapping : mappings){
+                    for(Map.Entry<Integer, List<EpisodeDetail>> mapping : mappings){
                         Collections.sort(mapping.getValue());
                     }
 
-
-                    // @TODO : adapt this to view
-                    /* LinearLayout seasonsContainer = activity.findViewById(R.id.seasons_container);
-                    TextView mainTitle = new TextView(getContext());
-                    mainTitle.setText(getResources().getString(R.string.episodes_container_title).toUpperCase());
-                    mainTitle.setPadding(0, 10, 0, 20);
-                    mainTitle.setTextColor(Color.BLACK);
-                    seasonsContainer.addView(mainTitle);
-
-                    // Load each season separately
-                    for(Map.Entry<String, List<EpisodeDetail>> mapping : mappings){
-                        loadSeason(mapping.getKey(), mapping.getValue(), seasonsContainer);
-                    } */
-
-
+                    loadSeasonChoices();
                 } else {
                     Log.d(LOG_TAG, "Failed to fetch serie's episodes");
                 }
