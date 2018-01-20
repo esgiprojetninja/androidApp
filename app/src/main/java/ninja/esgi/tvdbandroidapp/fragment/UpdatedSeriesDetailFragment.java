@@ -2,7 +2,8 @@ package ninja.esgi.tvdbandroidapp.fragment;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.media.Rating;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -21,11 +21,12 @@ import android.widget.TextView;
 import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.activity.UpdatedSeriesDetailActivity;
 import ninja.esgi.tvdbandroidapp.activity.UpdatedSeriesListActivity;
-import ninja.esgi.tvdbandroidapp.activity.dummy.DummyContent;
-import ninja.esgi.tvdbandroidapp.model.UpdatedSerie;
 import ninja.esgi.tvdbandroidapp.model.response.GetSerieDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.GetSerieResponse;
+import ninja.esgi.tvdbandroidapp.model.response.SearchSeriesDataResponse;
 import ninja.esgi.tvdbandroidapp.model.response.UserFavoritesResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserRatingsDataResponse;
+import ninja.esgi.tvdbandroidapp.model.response.UserRatingsResponse;
 import ninja.esgi.tvdbandroidapp.networkops.ApiServiceManager;
 import ninja.esgi.tvdbandroidapp.session.SessionStorage;
 import retrofit2.Response;
@@ -75,7 +76,17 @@ public class UpdatedSeriesDetailFragment extends Fragment {
             activity = this.getActivity();
             appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             adaptFavFABDisplay();
+            fetchUserRatings();
             fetchSeries();
+            blockRatingBar(true);
+
+            RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
+            mRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+                    Log.d(LOG_TAG, "coucou");
+                }
+            });
         }
     }
 
@@ -102,10 +113,9 @@ public class UpdatedSeriesDetailFragment extends Fragment {
 
     }
 
-    private void loadData() {
+    private void loadBasicData() {
         if (appBarLayout != null) {
             loadTitle();
-            loadAverageRating();
             loadRatingDetails();
             loadStatus();
             loadGenres();
@@ -140,10 +150,36 @@ public class UpdatedSeriesDetailFragment extends Fragment {
         }
     }
 
+    final private void blockRatingBar(boolean block) {
+        RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
+        mRating.setIsIndicator(block);
+    }
+
+    final private void loadRatingStars() {
+        UserRatingsDataResponse userRating = session.getRatingIfExists(SearchSeriesDataResponse.ITEM_TYPE, tvShowID);
+        if (userRating != null) {
+            loadUserRatingStars(userRating);
+        } else {
+            loadAverageRating();
+        }
+    }
+
+    final private void loadUserRatingStars(UserRatingsDataResponse userRating) {
+        RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
+        mRating.setRating(userRating.getRating());
+
+        LayerDrawable stars = (LayerDrawable) mRating.getProgressDrawable();
+        stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+    }
+
     private void loadAverageRating() {
         if (serieData.getSiteRating() == null) return;
         RatingBar mRating = (RatingBar) activity.findViewById(R.id.ratingBar);
         mRating.setRating(Float.parseFloat(String.valueOf(serieData.getSiteRating())));
+
+
+        LayerDrawable stars = (LayerDrawable) mRating.getProgressDrawable();
+        stars.getDrawable(2).setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
     }
 
     final private void loadRatingDetails() {
@@ -178,8 +214,7 @@ public class UpdatedSeriesDetailFragment extends Fragment {
                 if (response.isSuccessful()) {
                     GetSerieResponse res = response.body();
                     serieData = res.getData();
-                    loadData();
-                    Log.d(LOG_TAG, "yeah mofo");
+                    loadBasicData();
                 } else {
                     Log.d(LOG_TAG, "uh oh, bad hat harry");
                 }
@@ -233,6 +268,62 @@ public class UpdatedSeriesDetailFragment extends Fragment {
                 } else {
                     Log.d(LOG_TAG, "Failed to update user's favorites");
                 }
+            }
+        });
+    }
+
+    final private void putRating(String rating) {
+        blockRatingBar(true);
+        this.apiSm.putUserRating(session.getSessionToken(), SearchSeriesDataResponse.ITEM_TYPE, tvShowID, rating, new Subscriber<Response<UserRatingsResponse>>() {
+            @Override
+            public void onCompleted() {
+                blockRatingBar(false);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                blockRatingBar(false);
+                Log.e(LOG_TAG, "putRating error", e);
+            }
+
+            @Override
+            public void onNext(Response<UserRatingsResponse> res) {
+                if (res.isSuccessful()) {
+                    UserRatingsResponse ratingsResponse = res.body();
+                    for (UserRatingsDataResponse userRating : ratingsResponse.getData()) {
+                        if (userRating.getRatingType().compareTo(SearchSeriesDataResponse.ITEM_TYPE) == 0
+                                && userRating.getRatingItemId().toString().compareTo(tvShowID) == 0) {
+                            session.addUserRating(userRating);
+                            loadUserRatingStars(userRating);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void fetchUserRatings() {
+        blockRatingBar(true);
+        this.apiSm.getUserRatings(this.session.getSessionToken(), new Subscriber<Response<UserRatingsResponse>>() {
+            @Override
+            public void onCompleted() {
+                blockRatingBar(false); }
+
+            @Override
+            public void onError(Throwable e) {
+                blockRatingBar(false); }
+
+            @Override
+            public void onNext(Response<UserRatingsResponse> response) {
+                blockRatingBar(false);
+                if (response.isSuccessful()) {
+                    UserRatingsResponse userResponse = response.body();
+                    session.setUserRatings(userResponse.getData());
+                } else {
+                    Log.d(LOG_TAG, "Failed to fetch user's favorites");
+                }
+                loadRatingStars();
             }
         });
     }
