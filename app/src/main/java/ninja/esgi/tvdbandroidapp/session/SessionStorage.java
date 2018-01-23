@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ninja.esgi.tvdbandroidapp.BuildConfig;
 import ninja.esgi.tvdbandroidapp.model.UpdatedSerie;
@@ -142,6 +144,17 @@ public class SessionStorage {
         editor.putString(SESSION_TOKEN, this.sessionToken);
         return editor.commit();
     }
+
+    public Map<String, String> getDefaultCredentials() {
+        SharedPreferences.Editor editor = this.preferences.edit();
+        String userName = BuildConfig.USER_NAME;
+        String userKey = BuildConfig.USER_KEY;
+        HashMap<String, String> credentials = new HashMap();
+        credentials.put("USER_KEY", userKey);
+        credentials.put("USER_NAME", userName);
+        return credentials;
+    }
+
 
     public boolean isUserConnected() {
         return ourInstance.sessionToken != null

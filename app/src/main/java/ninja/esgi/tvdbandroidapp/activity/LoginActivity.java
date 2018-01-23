@@ -1,6 +1,7 @@
 package ninja.esgi.tvdbandroidapp.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +13,8 @@ import android.widget.Spinner;
 
 import java.io.IOException;
 import java.util.HashMap;
+
+import ninja.esgi.tvdbandroidapp.BuildConfig;
 import ninja.esgi.tvdbandroidapp.R;
 import ninja.esgi.tvdbandroidapp.model.Login;
 import ninja.esgi.tvdbandroidapp.model.response.LoginResponse;
@@ -32,8 +35,18 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         this.session = SessionStorage.getInstance(getApplicationContext());
+        HashMap credentials = (HashMap) this.session.getDefaultCredentials();
+        String userKey = (String) credentials.get("USER_KEY");
+        String userName = (String) credentials.get("USER_NAME");
+        System.out.println(credentials.toString());
+
+        EditText userKeyTargetInput = (EditText) findViewById(R.id.username_input);
+        userKeyTargetInput.setText(userName);
+        EditText userNameTargetInput = (EditText) findViewById(R.id.userkey_input);
+        userNameTargetInput.setText(userKey);
+
+
         this.apiSm = new ApiServiceManager();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);

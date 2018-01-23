@@ -19,6 +19,8 @@ android {
     }
     buildTypes.each {
         it.buildConfigField 'String', 'TDVB_API_KEY', TdvbApiKey
+        it.buildConfigField 'String', 'USER_KEY', DefaultUserKey
+        it.buildConfigField 'String', 'USER_NAME', DefaultUserName
     }
 }
 
