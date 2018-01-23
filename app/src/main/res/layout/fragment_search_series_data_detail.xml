@@ -1,4 +1,5 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,10 +8,15 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/main_container_series"
             android:layout_width="match_parent"
-            android:minHeight="500dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:minHeight="500dp">
+
             <Spinner
                 android:id="@+id/login_spinner"
                 android:layout_width="match_parent"
@@ -23,74 +29,91 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
-                android:padding="20dp"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:padding="20dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:padding="5dp"
-                    android:orientation="vertical">
-                    <Button
-                        android:layout_width="match_parent"
-                        android:id="@+id/favoriteHandler"
-                        android:visibility="gone"
-                        android:clickable="true"
-                        android:onClick="handleFavorite"
-                        android:weightSum="1"
-                        android:text="@string/loading"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:weightSum="1"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <TextView
-                        android:id="@+id/series_name"
-                        android:drawableBottom="@color/colorPrimaryDark"
+                    android:orientation="vertical"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/imageView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:maxHeight="300dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@android:drawable/ic_menu_gallery" />
+
+                    <Button
+                        android:id="@+id/favoriteHandler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="handleFavorite"
+                        android:text="@string/loading"
+                        android:visibility="gone"
+                        android:weightSum="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:id="@+id/series_name"
                         style="@style/Base.DialogWindowTitle.AppCompat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableBottom="@color/colorPrimaryDark"
                         android:text="@string/loading" />
 
                     <TextView
                         android:id="@+id/series_rating"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/loading"
-                        android:gravity="end" />
+                        android:gravity="end"
+                        android:text="@string/loading" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/user_rating_input_prefix" />
+
                         <EditText
                             android:id="@+id/user_rating_input"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:inputType="numberSigned" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=" /10" />
+
                         <Button
+                            android:id="@+id/remove_rating_btn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/remove_rating_btn"
-                            android:text="@string/remove_rating"/>
+                            android:text="@string/remove_rating" />
                     </LinearLayout>
 
 
                     <TextView
                         android:id="@+id/series_status"
-                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:text="@string/loading" />
 
                     <TextView
@@ -120,16 +143,16 @@
                     <TextView
                         android:id="@+id/overview"
                         android:layout_width="match_parent"
-                        android:layout_marginTop="15dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
                         android:text="@string/loading" />
 
 
                     <TextView
                         android:id="@+id/imdb_id"
-                        android:layout_marginTop="15dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
                         android:text="@string/loading" />
 
                     <TextView
@@ -145,15 +168,15 @@
                         android:text="@string/loading" />
 
                 </LinearLayout>
+
                 <LinearLayout
+                    android:id="@+id/seasons_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/seasons_container"
-                    android:layout_weight="1"
-                    android:padding="5dp"
                     android:layout_marginTop="20dp"
-                    android:orientation="vertical">
-                </LinearLayout>
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="5dp"></LinearLayout>
             </LinearLayout>
 
         </android.support.constraint.ConstraintLayout>

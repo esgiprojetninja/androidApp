@@ -1,12 +1,16 @@
 package ninja.esgi.tvdbandroidapp.fragment;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -21,12 +25,15 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,6 +74,7 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
     private ApiServiceManager apiSm = null;
     private GetSerieDataResponse tvShowDetails = null;
     View view;
+    Activity activity;
 
     public SearchSeriesDataDetailFragment() {
     }
@@ -77,6 +85,7 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
         // Inflate the layout for this fragment
         this.view = inflater.inflate(R.layout.fragment_search_series_data_detail, container, true);
         this.session = SessionStorage.getInstance(getContext());
+        activity = this.getActivity();
         this.apiSm = new ApiServiceManager();
         this._neeededResponses = 2;
         this.fetchData();
@@ -260,6 +269,11 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
             seriesLastUpdated.setText(getResources().getString(R.string.series_lastupdated_prefix) + " " + tvShowDetails.getFormatedLastUpdated());
         }  else {
             seriesLastUpdated.setVisibility(View.GONE);
+        }
+
+        if (tvShowDetails.getBanner() != null && tvShowDetails.getBanner().length() > 0 && tvShowDetails.getBanner().contains("graphical/")) {
+            SearchSeriesDataDetailFragment.LoadImageFromURL loader = new SearchSeriesDataDetailFragment.LoadImageFromURL(view.findViewById(R.id.main_container_series), tvShowDetails.getBanner());
+            loader.execute();
         }
 
     }
@@ -595,5 +609,60 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
         } else {
             this.putFavorite(tvShowDetails.getId().toString());
         }
+    }
+
+
+    public class LoadImageFromURL extends AsyncTask<String, Void, Bitmap> {
+        private View viewToDrawOn;
+        private String endUri;
+
+        public LoadImageFromURL(View viewToDrawOn, String endUri) {
+            this.viewToDrawOn = viewToDrawOn;
+            this.endUri = endUri;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            // TODO Auto-generated method stub
+
+            try {
+                URL url = new URL("https://www.thetvdb.com/banners/"+this.endUri);
+                InputStream is = url.openConnection().getInputStream();
+                Bitmap bitMap = BitmapFactory.decodeStream(is);
+
+                return bitMap;
+
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+
+                int currentViewWidth = view.getWidth();
+                int drawableWidth = result.getWidth();
+                int drawableHeight = result.getHeight();
+
+                int newDrawableHeight = (int) (drawableHeight * currentViewWidth) / drawableWidth;
+
+                // Drawable drawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(result, currentViewWidth, newDrawableHeight, true));
+
+
+                BitmapDrawable drawable = new BitmapDrawable(activity.getResources(), result);
+                ImageView imv = view.findViewById(R.id.imageView);
+                imv.setImageDrawable(drawable);
+            }
+        }
+
     }
 }

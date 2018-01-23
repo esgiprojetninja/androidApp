@@ -134,7 +134,6 @@ public class UpdatedSeriesDetailFragment extends Fragment {
 
             tvShowID = getArguments().getString(ARG_ITEM_ID);
 
-
             appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             adaptFavFABDisplay();
             fetchUserRatings();
