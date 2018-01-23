@@ -1,13 +1,17 @@
 package ninja.esgi.tvdbandroidapp.fragment;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
@@ -32,6 +36,11 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -165,6 +174,10 @@ public class UpdatedSeriesDetailFragment extends Fragment {
             loadStatus();
             loadGenres();
             loadOverview();
+            if (serieData.getBanner() != null && serieData.getBanner().length() > 0 && serieData.getBanner().contains("graphical/")) {
+                LoadImageFromURL loader = new LoadImageFromURL(activity.findViewById(R.id.toolbar_layout), serieData.getBanner());
+                loader.execute();
+            }
         }
     }
 
@@ -590,4 +603,73 @@ public class UpdatedSeriesDetailFragment extends Fragment {
             }
         });
     }
+
+    final private void bite(final View containerView, final String endUrl) {
+        InputStream in =null;
+        Bitmap bmp=null;
+        int responseCode = -1;
+        try{
+            URL url = new URL("https://www.thetvdb.com/banners/" + endUrl);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setDoInput(true);
+            con.connect();
+            responseCode = con.getResponseCode();
+            if(responseCode == HttpURLConnection.HTTP_OK)
+            {
+                Log.d(LOG_TAG, "######### Found image at: https://www.thetvdb.com/banners/" + endUrl);
+                in = con.getInputStream();
+                bmp = BitmapFactory.decodeStream(in);
+                in.close();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    containerView.setBackground(new BitmapDrawable(activity.getResources(), bmp));
+                }
+            }
+
+        }
+        catch(Exception ex){
+            Log.e(LOG_TAG, ex.toString());
+        }
+    }
+
+    public class LoadImageFromURL extends AsyncTask<String, Void, Bitmap> {
+        private View viewToDrawOn;
+        private String endUri;
+
+        public LoadImageFromURL(View viewToDrawOn, String endUri) {
+            this.viewToDrawOn = viewToDrawOn;
+            this.endUri = endUri;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            // TODO Auto-generated method stub
+
+            try {
+                URL url = new URL("https://www.thetvdb.com/banners/"+this.endUri);
+                InputStream is = url.openConnection().getInputStream();
+                Bitmap bitMap = BitmapFactory.decodeStream(is);
+                return bitMap;
+
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                viewToDrawOn.setBackground(new BitmapDrawable(activity.getResources(), result));
+            }
+        }
+
+    }
+
 }
