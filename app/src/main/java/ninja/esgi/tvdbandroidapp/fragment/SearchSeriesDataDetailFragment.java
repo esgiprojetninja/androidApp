@@ -648,16 +648,6 @@ public class SearchSeriesDataDetailFragment extends DialogFragment {
             // TODO Auto-generated method stub
             super.onPostExecute(result);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-
-                int currentViewWidth = view.getWidth();
-                int drawableWidth = result.getWidth();
-                int drawableHeight = result.getHeight();
-
-                int newDrawableHeight = (int) (drawableHeight * currentViewWidth) / drawableWidth;
-
-                // Drawable drawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(result, currentViewWidth, newDrawableHeight, true));
-
-
                 BitmapDrawable drawable = new BitmapDrawable(activity.getResources(), result);
                 ImageView imv = view.findViewById(R.id.imageView);
                 imv.setImageDrawable(drawable);
