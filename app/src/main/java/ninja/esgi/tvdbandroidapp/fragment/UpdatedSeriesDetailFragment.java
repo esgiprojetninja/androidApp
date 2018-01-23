@@ -351,7 +351,6 @@ public class UpdatedSeriesDetailFragment extends Fragment {
         }
     }
 
-
     final private void loadSeasonChoices() {
         LinearLayout mListContainer = (LinearLayout) activity.findViewById(R.id.season_choice);
         mListContainer.removeAllViews();
@@ -576,7 +575,7 @@ public class UpdatedSeriesDetailFragment extends Fragment {
                 if (response.isSuccessful()) {
                     GetSeriesEpisodesResponse episodes = response.body();
                     List<EpisodeDetail> episodesList = episodes.getData();
-                    HashMap<Integer, List<EpisodeDetail>> episodesBySeasons = new HashMap<>();
+                    HashMap<String, List<EpisodeDetail>> episodesBySeasons = new HashMap<>();
                     for (EpisodeDetail episode: episodesList) {
                         Long season = episode.getAiredSeason();
                         String currentSeason = (season == null) ? "0" : season.toString();
@@ -585,11 +584,15 @@ public class UpdatedSeriesDetailFragment extends Fragment {
                         } else {
                             List<EpisodeDetail> epsList = new ArrayList<EpisodeDetail>();
                             epsList.add(episode);
-                            episodesBySeasons.put(Integer.parseInt(currentSeason), epsList);
+                            episodesBySeasons.put(currentSeason, epsList);
                         }
                     }
+                    HashMap<Integer, List<EpisodeDetail>> episodesBySeasonsWithIntKeys = new HashMap<>();
+                    for (HashMap.Entry<String, List<EpisodeDetail>> entry : episodesBySeasons.entrySet()) {
+                        episodesBySeasonsWithIntKeys.put(Integer.valueOf(entry.getKey()), entry.getValue());
+                    }
                     // Sorting by season
-                    TreeMap<Integer, List<EpisodeDetail>> sorted = new TreeMap<>(episodesBySeasons);
+                    TreeMap<Integer, List<EpisodeDetail>> sorted = new TreeMap<>(episodesBySeasonsWithIntKeys);
                     mappings = sorted.entrySet();
                     // Sorting by episodes
                     for(Map.Entry<Integer, List<EpisodeDetail>> mapping : mappings){
@@ -602,33 +605,6 @@ public class UpdatedSeriesDetailFragment extends Fragment {
                 }
             }
         });
-    }
-
-    final private void bite(final View containerView, final String endUrl) {
-        InputStream in =null;
-        Bitmap bmp=null;
-        int responseCode = -1;
-        try{
-            URL url = new URL("https://www.thetvdb.com/banners/" + endUrl);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setDoInput(true);
-            con.connect();
-            responseCode = con.getResponseCode();
-            if(responseCode == HttpURLConnection.HTTP_OK)
-            {
-                Log.d(LOG_TAG, "######### Found image at: https://www.thetvdb.com/banners/" + endUrl);
-                in = con.getInputStream();
-                bmp = BitmapFactory.decodeStream(in);
-                in.close();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    containerView.setBackground(new BitmapDrawable(activity.getResources(), bmp));
-                }
-            }
-
-        }
-        catch(Exception ex){
-            Log.e(LOG_TAG, ex.toString());
-        }
     }
 
     public class LoadImageFromURL extends AsyncTask<String, Void, Bitmap> {
